@@ -17,6 +17,7 @@ A Single Page Application (SPA) for browsing and listening to music podcasts, bu
 - ✅ Webpack dev & prod build ready
 - ✅ Base React entry point rendering
 - ✅ ESLint 9 + Prettier configured with project scripts
+- ✅ Husky pre-commit hook running lint and format checks
 
 ## 🚀 Getting Started
 
@@ -30,6 +31,9 @@ A Single Page Application (SPA) for browsing and listening to music podcasts, bu
 ```bash
 # Install dependencies
 npm install
+
+# (First time after cloning) install Husky hooks
+npm run prepare
 ```
 
 ### Development Mode
@@ -59,6 +63,7 @@ The output bundle will be generated in the `dist/` directory.
 | `npm run lint:fix`     | Fix lint issues automatically               |
 | `npm run format`       | Format code with Prettier                   |
 | `npm run format:check` | Check formatting without writing changes    |
+| `npm run prepare`      | Install Husky git hooks                     |
 
 ## 🏗️ Technical Stack
 
