@@ -8,8 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ### Added
 
-- Commitlint configuration with Husky `commit-msg` hook enforcing Conventional Commits.
-- _Pending entries_
+- Project layout reorganised into `app/`, `core/`, `shared/`, `features/`, and `styles/` following the planned hexagonal/feature-based architecture.
+- Initial shared header shell rendered via the new React app shell.
+- Commitlint hook enforcing Conventional Commits during `commit-msg`.
 
 ## [v0.1.1-tooling-update] - 2025-11-08
 

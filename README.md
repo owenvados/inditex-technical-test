@@ -19,6 +19,7 @@ A Single Page Application (SPA) for browsing and listening to music podcasts, bu
 - ✅ ESLint 9 + Prettier configured with project scripts
 - ✅ Husky pre-commit hook running lint and format checks
 - ✅ Commitlint commit-msg hook enforcing Conventional Commits
+- ✅ Initial feature-based architecture scaffold with shared header shell
 - ✅ Jest + React Testing Library configured for unit tests
 
 ## 🚀 Getting Started
@@ -72,9 +73,7 @@ The output bundle will be generated in the `dist/` directory.
 
 ## 📚 Documentation
 
-- `docs/arquitectura.md` – Architecture guidelines (Spanish)
-- `docs/plan-de-proyecto.md` – Project roadmap (Spanish)
-- `CHANGELOG.md` – Version history and release notes
+- CHANGELOG.md – Version history and release notes
 - Commit message convention – Conventional Commits enforced via Commitlint
 
 ## 🏗️ Technical Stack
@@ -86,3 +85,20 @@ The output bundle will be generated in the `dist/` directory.
 - **Prettier** - Code formatting
 - **Jest + React Testing Library** - Unit testing framework with ts-jest and jsdom
 - **CSS (native)** - Styling (no frameworks)
+
+## 🏗️ Project Folder Scaffold
+
+```
+src/
+├─ app/       # Minimal React shell (App.tsx, future router/providers)
+├─ core/      # Domain-level interfaces and abstractions (ports)
+├─ shared/    # Reusable implementations and UI components (adapters)
+├─ features/  # Business modules following hexagonal layers
+└─ styles/    # Global CSS assets (reset, variables, layout)
+```
+
+- `app/` mounts the application and wires global providers.
+- `core/` defines contracts that domain/application code depend on.
+- `shared/` holds infrastructure adapters and shared presentation building blocks.
+- `features/` encapsulates each feature with domain/application/infrastructure/presentation slices.
+- `styles/` centralises global styling applied at bootstrap.
