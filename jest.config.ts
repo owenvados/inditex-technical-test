@@ -9,6 +9,7 @@ const config: Config = {
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@features/(.*)$': '<rootDir>/src/features/$1',
+    '^@podcasts/(.*)$': '<rootDir>/src/features/podcasts/$1',
     '^@styles/(.*)$': '<rootDir>/src/styles/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },

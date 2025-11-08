@@ -26,6 +26,7 @@
       "@core/*": ["core/*"],
       "@shared/*": ["shared/*"],
       "@features/*": ["features/*"],
+      "@podcasts/*": ["features/podcasts/*"],
       "@styles/*": ["styles/*"]
     }
   },

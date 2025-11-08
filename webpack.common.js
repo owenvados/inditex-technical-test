@@ -16,6 +16,7 @@ module.exports = {
       "@core": path.resolve(__dirname, "src/core"),
       "@shared": path.resolve(__dirname, "src/shared"),
       "@features": path.resolve(__dirname, "src/features"),
+      '@podcasts': path.resolve(__dirname, 'src/features/podcasts'),
       "@styles": path.resolve(__dirname, "src/styles"),
     },
   },
