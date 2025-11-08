@@ -1,15 +1,24 @@
-import Header from '../shared/presentation/components/Header';
+import Header from '@shared/presentation/components/Header';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
+import AppRouter from './router/AppRouter';
+
+/**
+ * Root application shell responsible for wiring global providers and layout.
+ *
+ * @returns {JSX.Element} The application layout containing the header and routed content.
+ */
 const App: React.FC = () => {
   return (
-    <div className="app-shell">
-      <Header />
-      <main className="app-shell__content">
-        <p style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
-          Coming soon: Music Podcast
-        </p>
-      </main>
-    </div>
+    <BrowserRouter>
+      <div className="app-container">
+        <Header />
+        <main className="app-container__content">
+          <AppRouter />
+        </main>
+      </div>
+    </BrowserRouter>
   );
 };
 

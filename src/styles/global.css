@@ -13,12 +13,12 @@ body {
   color: var(--color-text);
 }
 
-.app-shell {
+.app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.app-shell__content {
+.app-container__content {
   flex: 1;
 }
