@@ -69,6 +69,12 @@ The output bundle will be generated in the `dist/` directory.
 | `npm run test:watch`    | Run Jest in watch mode                      |
 | `npm run test:coverage` | Run Jest with coverage reports              |
 
+## 📚 Documentation
+
+- `docs/arquitectura.md` – Architecture guidelines (Spanish)
+- `docs/plan-de-proyecto.md` – Project roadmap (Spanish)
+- `CHANGELOG.md` – Version history and release notes
+
 ## 🏗️ Technical Stack
 
 - **React 19** - UI library
