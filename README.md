@@ -16,6 +16,7 @@ A Single Page Application (SPA) for browsing and listening to music podcasts, bu
 - ✅ React 19 + TypeScript configured
 - ✅ Webpack dev & prod build ready
 - ✅ Base React entry point rendering
+- ✅ ESLint 9 + Prettier configured with project scripts
 
 ## 🚀 Getting Started
 
@@ -49,15 +50,21 @@ The output bundle will be generated in the `dist/` directory.
 
 ## 📦 Available Commands
 
-| Command         | Description                            |
-| --------------- | -------------------------------------- |
-| `npm install`   | Install project dependencies           |
-| `npm run dev`   | Start development server (Webpack HMR) |
-| `npm run build` | Build production bundle                |
+| Command                | Description                                 |
+| ---------------------- | ------------------------------------------- |
+| `npm install`          | Install project dependencies                |
+| `npm run dev`          | Start development server (Webpack HMR)      |
+| `npm run build`        | Build production bundle                     |
+| `npm run lint`         | Run ESLint over the TypeScript/React source |
+| `npm run lint:fix`     | Fix lint issues automatically               |
+| `npm run format`       | Format code with Prettier                   |
+| `npm run format:check` | Check formatting without writing changes    |
 
 ## 🏗️ Technical Stack
 
 - **React 19** - UI library
 - **TypeScript** - Static type checking
 - **Webpack 5** - Module bundler and dev server
+- **ESLint 9** - Linting (TypeScript + React + Prettier)
+- **Prettier** - Code formatting
 - **CSS (native)** - Styling (no frameworks)
