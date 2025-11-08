@@ -5,7 +5,12 @@ const config: Config = {
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@app/(.*)$': '<rootDir>/src/app/$1',
+    '^@core/(.*)$': '<rootDir>/src/core/$1',
+    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
+    '^@features/(.*)$': '<rootDir>/src/features/$1',
+    '^@styles/(.*)$': '<rootDir>/src/styles/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {

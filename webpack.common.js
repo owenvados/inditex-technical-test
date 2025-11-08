@@ -11,6 +11,13 @@ module.exports = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    alias: {
+      "@app": path.resolve(__dirname, "src/app"),
+      "@core": path.resolve(__dirname, "src/core"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+      "@features": path.resolve(__dirname, "src/features"),
+      "@styles": path.resolve(__dirname, "src/styles"),
+    },
   },
   module: {
     rules: [

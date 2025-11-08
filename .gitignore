@@ -86,6 +86,7 @@ dist/
 # Temporary files
 *.tmp
 *.temp
+run/
 
 # AI artifacts (not to be committed)
 context/
