@@ -18,6 +18,7 @@ A Single Page Application (SPA) for browsing and listening to music podcasts, bu
 - ✅ Base React entry point rendering
 - ✅ ESLint 9 + Prettier configured with project scripts
 - ✅ Husky pre-commit hook running lint and format checks
+- ✅ Commitlint commit-msg hook enforcing Conventional Commits
 - ✅ Jest + React Testing Library configured for unit tests
 
 ## 🚀 Getting Started
@@ -74,6 +75,7 @@ The output bundle will be generated in the `dist/` directory.
 - `docs/arquitectura.md` – Architecture guidelines (Spanish)
 - `docs/plan-de-proyecto.md` – Project roadmap (Spanish)
 - `CHANGELOG.md` – Version history and release notes
+- Commit message convention – Conventional Commits enforced via Commitlint
 
 ## 🏗️ Technical Stack
 
