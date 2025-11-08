@@ -18,6 +18,7 @@ A Single Page Application (SPA) for browsing and listening to music podcasts, bu
 - ✅ Base React entry point rendering
 - ✅ ESLint 9 + Prettier configured with project scripts
 - ✅ Husky pre-commit hook running lint and format checks
+- ✅ Jest + React Testing Library configured for unit tests
 
 ## 🚀 Getting Started
 
@@ -54,16 +55,19 @@ The output bundle will be generated in the `dist/` directory.
 
 ## 📦 Available Commands
 
-| Command                | Description                                 |
-| ---------------------- | ------------------------------------------- |
-| `npm install`          | Install project dependencies                |
-| `npm run dev`          | Start development server (Webpack HMR)      |
-| `npm run build`        | Build production bundle                     |
-| `npm run lint`         | Run ESLint over the TypeScript/React source |
-| `npm run lint:fix`     | Fix lint issues automatically               |
-| `npm run format`       | Format code with Prettier                   |
-| `npm run format:check` | Check formatting without writing changes    |
-| `npm run prepare`      | Install Husky git hooks                     |
+| Command                 | Description                                 |
+| ----------------------- | ------------------------------------------- |
+| `npm install`           | Install project dependencies                |
+| `npm run dev`           | Start development server (Webpack HMR)      |
+| `npm run build`         | Build production bundle                     |
+| `npm run lint`          | Run ESLint over the TypeScript/React source |
+| `npm run lint:fix`      | Fix lint issues automatically               |
+| `npm run format`        | Format code with Prettier                   |
+| `npm run format:check`  | Check formatting without writing changes    |
+| `npm run prepare`       | Install Husky git hooks                     |
+| `npm run test`          | Run Jest test suite                         |
+| `npm run test:watch`    | Run Jest in watch mode                      |
+| `npm run test:coverage` | Run Jest with coverage reports              |
 
 ## 🏗️ Technical Stack
 
@@ -72,4 +76,5 @@ The output bundle will be generated in the `dist/` directory.
 - **Webpack 5** - Module bundler and dev server
 - **ESLint 9** - Linting (TypeScript + React + Prettier)
 - **Prettier** - Code formatting
+- **Jest + React Testing Library** - Unit testing framework with ts-jest and jsdom
 - **CSS (native)** - Styling (no frameworks)
