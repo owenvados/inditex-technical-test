@@ -8,9 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ### Added
 
-- Project layout reorganised into `app/`, `core/`, `shared/`, `features/`, and `styles/` following the planned hexagonal/feature-based architecture.
-- Initial shared header shell rendered via the new React app shell.
-- Commitlint hook enforcing Conventional Commits during `commit-msg`.
+- Centralised configuration layer (`@config`) and relocated `AppRouter` under `src/core`.
+- Podcast catalogue domain building blocks: `Podcast` entity, repository port, `GetTopPodcasts` use case, HTTP client, and iTunes repository adapter.
+- Presentation flow for the podcasts feature, including `PodcastCard`, `PodcastList`, `EpisodeList`, and routing pages.
+- React Testing Library coverage for the podcasts presentation layer and shared header component.
+
+### Changed
+
+- Global and reset styles reformatted for consistency with project formatting rules.
+
+## [v0.2.1-routing] - 2025-11-08
+
+### Added
+
+- React Router shell (`AppRouter`) wiring the header and placeholder feature pages.
+- Placeholder podcast pages co-located with their tests, including episode and podcast detail views.
+- Jest setup polyfills (`TextEncoder`/`TextDecoder`) enabling React Router testing.
+
+### Changed
+
+- Layout container renamed to `app-container` with updated global styling.
+- Webpack/TypeScript/Jest aliases consolidated under `@podcasts`, `@app`, and shared paths.
+
+### Removed
+
+- Legacy scaffolding files and obsolete test locations replaced by the new structure.
 
 ## [v0.1.1-tooling-update] - 2025-11-08
 
