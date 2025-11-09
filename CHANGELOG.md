@@ -8,14 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ### Added
 
-- Centralised configuration layer (`@config`) and relocated `AppRouter` under `src/core`.
-- Podcast catalogue domain building blocks: `Podcast` entity, repository port, `GetTopPodcasts` use case, HTTP client, and iTunes repository adapter.
-- Presentation flow for the podcasts feature, including `PodcastCard`, `PodcastList`, `EpisodeList`, and routing pages.
-- React Testing Library coverage for the podcasts presentation layer and shared header component.
+- _No entries._
 
 ### Changed
 
-- Global and reset styles reformatted for consistency with project formatting rules.
+- _No entries._
+
+## [v0.3.0-main-view] - 2025-11-09
+
+### Added
+
+- Centralised configuration layer (`@config`) and relocation of `AppRouter` to `src/core/router`.
+- Podcast catalogue domain building blocks: `Podcast` entity, repository port, `GetTopPodcasts` use case, HTTP client, and iTunes repository adapter.
+- Presentation flow for the podcasts feature, including `PodcastCard`, `PodcastList`, `EpisodeList`, and feature pages with data fetching hook.
+- React Testing Library coverage for the podcasts presentation components and shared `Header`.
+
+### Changed
+
+- Global and reset CSS normalised to match project formatting conventions.
+- `CHANGELOG.md` expanded with the podcasts release notes.
 
 ## [v0.2.1-routing] - 2025-11-08
 
@@ -33,6 +44,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 ### Removed
 
 - Legacy scaffolding files and obsolete test locations replaced by the new structure.
+
+## [v0.2.0-architecture] - 2025-11-08
+
+### Added
+
+- Feature-based folder structure aligned with the hexagonal/DDD proposal for podcasts.
+- Documentation in `docs/ESTRUCTURA_FINAL.md` outlining the selected architecture.
+- `.gitignore` updates preventing accidental commits of AI-related assets.
+
+### Changed
+
+- Refined project tree to group `app`, `core`, `shared`, `features`, and `styles` at the same depth.
+- Updated README with architecture overview and evolution plan.
+
+### Removed
+
+- `.keep` placeholders within feature directories after scaffolding.
+
+## [v0.1.3-commitlint] - 2025-11-07
+
+### Added
+
+- Commitlint configuration enforcing Conventional Commits via Husky `commit-msg` hook.
+- Documentation updates describing the commit message policy.
+
+### Changed
+
+- Husky pipeline extended to run Commitlint during commit workflow.
+
+## [v0.1.2-docs-update] - 2025-11-07
+
+### Added
+
+- Documentation refresh covering setup steps, project goals, and reviewer roadmap in `docs/`.
+- README updates reflecting project status and author information.
+
+### Changed
+
+- Consolidated documentation to ensure English README and Spanish docs, per project rules.
 
 ## [v0.1.1-tooling-update] - 2025-11-08
 
