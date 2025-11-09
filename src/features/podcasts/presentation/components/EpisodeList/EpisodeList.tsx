@@ -1,32 +1,63 @@
+import type { Episode } from '@podcasts/domain/entities/Episode';
+import StatusMessage from '@shared/presentation/components/StatusMessage';
+import React, { memo, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+
 import './EpisodeList.css';
 
-type EpisodeRow = {
-  id: string;
-  title: string;
-  publishedAt: string;
-  durationMinutes: number;
+export interface EpisodeListProps {
+  episodes: Episode[];
+  podcastId: string;
+}
+
+const formatDate = (date: Date): string =>
+  new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+
+const formatDuration = (durationMs: number): string => {
+  if (!durationMs || Number.isNaN(durationMs)) {
+    return '--:--';
+  }
+
+  const totalSeconds = Math.floor(durationMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = seconds.toString().padStart(2, '0');
+
+  if (hours > 0) {
+    return `${hours}:${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  return `${formattedMinutes}:${formattedSeconds}`;
 };
 
-const SAMPLE_EPISODES: EpisodeRow[] = [
-  { id: 'episode-1', title: 'Sample Episode 1', publishedAt: '2025-01-01', durationMinutes: 30 },
-  { id: 'episode-2', title: 'Sample Episode 2', publishedAt: '2025-01-08', durationMinutes: 29 },
-  { id: 'episode-3', title: 'Sample Episode 3', publishedAt: '2025-01-15', durationMinutes: 32 },
-];
+const EpisodeListComponent: React.FC<EpisodeListProps> = ({ episodes, podcastId }) => {
+  const rows = useMemo(() => {
+    if (episodes.length === 0) {
+      return null;
+    }
 
-const formatDate = (dateIso: string): string => dateIso;
+    return episodes.map((episode) => (
+      <tr key={episode.id} className="episode-row">
+        <td className="episode-title-cell">
+          <Link to={`/podcast/${podcastId}/episode/${episode.id}`} className="episode-title-link">
+            {episode.title}
+          </Link>
+        </td>
+        <td className="episode-date">{formatDate(episode.publishedAt)}</td>
+        <td className="episode-duration">{formatDuration(episode.durationMs)}</td>
+      </tr>
+    ));
+  }, [episodes, podcastId]);
 
-const formatDuration = (durationMinutes: number): string => {
-  return `${durationMinutes.toString().padStart(2, '0')}:00`;
-};
-
-/**
- * Table that displays a list of sample podcast episodes.
- *
- * @returns {JSX.Element} The episodes table with title, date and duration columns.
- */
-export const EpisodeList: React.FC = () => {
-  if (SAMPLE_EPISODES.length === 0) {
-    return <div className="empty-state">No episodes available</div>;
+  if (!rows) {
+    return <StatusMessage message="No episodes available" dataTestId="episode-empty-state" />;
   }
 
   return (
@@ -39,20 +70,14 @@ export const EpisodeList: React.FC = () => {
             <th>Duration</th>
           </tr>
         </thead>
-        <tbody>
-          {SAMPLE_EPISODES.map((episode) => (
-            <tr key={episode.id} className="episode-row">
-              <td className="episode-title-cell">{episode.title}</td>
-              <td className="episode-date">{formatDate(episode.publishedAt)}</td>
-              <td className="episode-duration">{formatDuration(episode.durationMinutes)}</td>
-            </tr>
-          ))}
-        </tbody>
+        <tbody>{rows}</tbody>
       </table>
     </div>
   );
 };
 
-EpisodeList.displayName = 'EpisodeList';
+EpisodeListComponent.displayName = 'EpisodeList';
+
+export const EpisodeList = memo(EpisodeListComponent);
 
 export default EpisodeList;

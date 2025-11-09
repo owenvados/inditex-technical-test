@@ -1,5 +1,6 @@
 import PodcastList from '@podcasts/presentation/components/PodcastList';
 import { useTopPodcasts } from '@podcasts/presentation/hooks/useTopPodcasts';
+import StatusMessage from '@shared/presentation/components/StatusMessage';
 import React from 'react';
 
 import './PodcastsPage.css';
@@ -15,8 +16,11 @@ export const PodcastsPage: React.FC = () => {
 
   return (
     <section className="podcasts-page">
-      {isLoading && <p data-testid="podcast-loading">Loading podcasts…</p>}
-      {!isLoading && <PodcastList podcasts={podcasts} />}
+      {isLoading ? (
+        <StatusMessage message="Loading podcasts…" dataTestId="podcast-loading" />
+      ) : (
+        <PodcastList podcasts={podcasts} />
+      )}
     </section>
   );
 };
