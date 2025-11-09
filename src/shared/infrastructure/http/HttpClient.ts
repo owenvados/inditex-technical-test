@@ -41,9 +41,11 @@ export class HttpClient {
    */
   async get<T>(url: string, useCorsProxy = false): Promise<T> {
     const targetUrl = this.buildUrl(url, useCorsProxy);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), APP_ENV.HTTP_TIMEOUT_MS);
 
     try {
-      const response = await fetch(targetUrl, { method: 'GET' });
+      const response = await fetch(targetUrl, { method: 'GET', signal: controller.signal });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -53,12 +55,15 @@ export class HttpClient {
     } catch (error) {
       console.error('[HttpClient] GET error:', error);
 
-      const isNetworkError = error instanceof TypeError;
+      const isAbortError = error instanceof DOMException && error.name === 'AbortError';
+      const isNetworkError = error instanceof TypeError || isAbortError;
       if (!useCorsProxy && this.corsProxy && isNetworkError) {
         return this.get<T>(url, true);
       }
 
       throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
