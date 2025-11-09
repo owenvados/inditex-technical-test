@@ -1,3 +1,14 @@
+.podcast-sidebar__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease-in-out;
+}
+
+.podcast-sidebar__link:hover {
+  transform: scale(1.02);
+}
+
 .podcast-sidebar__image {
   width: 100%;
   max-width: 250px;
