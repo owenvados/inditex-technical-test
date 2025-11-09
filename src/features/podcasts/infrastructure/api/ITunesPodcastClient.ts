@@ -28,7 +28,7 @@ export class ITunesPodcastClient {
    */
   async getTopPodcasts(): Promise<TopPodcastsResponse> {
     const url = buildTopPodcastsFeedUrl();
-    return this.client.getExternal<TopPodcastsResponse>(url);
+    return this.client.get<TopPodcastsResponse>(url, false);
   }
 
   /**

@@ -39,7 +39,7 @@ export class HttpClient {
    * @param useCorsProxy Enable/disable proxy usage for the request.
    * @returns Promise resolving to the parsed payload.
    */
-  async get<T>(url: string, useCorsProxy = true): Promise<T> {
+  async get<T>(url: string, useCorsProxy = false): Promise<T> {
     const targetUrl = this.buildUrl(url, useCorsProxy);
 
     try {
