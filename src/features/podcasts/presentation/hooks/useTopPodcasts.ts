@@ -17,6 +17,11 @@ const INITIAL_STATE: UseTopPodcastsState = {
   isLoading: false,
 };
 
+/**
+ * Provides the top podcasts catalogue along with a loading indicator.
+ *
+ * @returns Current list of podcasts and loading flag.
+ */
 export const useTopPodcasts = (): UseTopPodcastsState => {
   const [state, setState] = useState<UseTopPodcastsState>(INITIAL_STATE);
   const { startLoading, stopLoading } = useLoadingState();

@@ -10,50 +10,51 @@ const getPodcastDetail = new GetPodcastDetail(repository);
 interface UsePodcastDetailState {
   podcastDetail: PodcastDetail | null;
   isLoading: boolean;
-  error?: string;
 }
 
 const INITIAL_STATE: UsePodcastDetailState = {
   podcastDetail: null,
   isLoading: false,
-  error: undefined,
 };
 
+/**
+ * Retrieves podcast detail information and exposes a loading flag.
+ *
+ * @param podcastId Identifier of the podcast to fetch.
+ * @returns Latest podcast detail along with loading state.
+ */
 export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetailState => {
   const [state, setState] = useState<UsePodcastDetailState>(INITIAL_STATE);
   const { startLoading, stopLoading } = useLoadingState();
 
   useEffect(() => {
-    if (!podcastId) {
-      setState({ podcastDetail: null, isLoading: false, error: 'Podcast ID is required' });
-      return;
-    }
-
     let cancelled = false;
 
     const fetchPodcastDetail = async () => {
-      setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+      if (!podcastId) {
+        if (!cancelled) {
+          setState({ podcastDetail: null, isLoading: false });
+        }
+        return;
+      }
+
+      setState((prev) => ({ ...prev, isLoading: true }));
       startLoading();
 
       try {
         const detail = await getPodcastDetail.execute(podcastId);
 
         if (!cancelled) {
-          setState({ podcastDetail: detail, isLoading: false, error: undefined });
+          setState({ podcastDetail: detail, isLoading: false });
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unexpected error';
         console.error('[usePodcastDetail] Failed to retrieve podcast detail', error);
 
         if (!cancelled) {
-          setState({ podcastDetail: null, isLoading: false, error: message });
+          setState({ podcastDetail: null, isLoading: false });
         }
       } finally {
         stopLoading();
-
-        if (!cancelled) {
-          setState((prev) => ({ ...prev, isLoading: false }));
-        }
       }
     };
 
