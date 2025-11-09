@@ -1,6 +1,7 @@
 import { GetTopPodcasts } from '@podcasts/application/use-cases/GetTopPodcasts';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
+import { useLoadingState } from '@shared/hooks/useLoadingState';
 import { useEffect, useState } from 'react';
 
 const repository = new ITunesPodcastRepository();
@@ -18,12 +19,14 @@ const INITIAL_STATE: UseTopPodcastsState = {
 
 export const useTopPodcasts = (): UseTopPodcastsState => {
   const [state, setState] = useState<UseTopPodcastsState>(INITIAL_STATE);
+  const { startLoading, stopLoading } = useLoadingState();
 
   useEffect(() => {
     let cancelled = false;
 
     const loadPodcasts = async () => {
       setState((prev) => ({ ...prev, isLoading: true }));
+      startLoading();
 
       try {
         const podcasts = await getTopPodcasts.execute();
@@ -37,6 +40,8 @@ export const useTopPodcasts = (): UseTopPodcastsState => {
         if (!cancelled) {
           setState({ podcasts: [], isLoading: false });
         }
+      } finally {
+        stopLoading();
       }
     };
 
@@ -45,7 +50,7 @@ export const useTopPodcasts = (): UseTopPodcastsState => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [startLoading, stopLoading]);
 
   return state;
 };

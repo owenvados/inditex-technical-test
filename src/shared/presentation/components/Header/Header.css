@@ -7,6 +7,10 @@
 .app-header__content {
   margin: 0 auto;
   max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .app-header__title {
@@ -19,4 +23,9 @@
 .app-header__title:hover,
 .app-header__title:focus {
   text-decoration: underline;
+}
+
+.app-header__spinner {
+  display: flex;
+  align-items: center;
 }
