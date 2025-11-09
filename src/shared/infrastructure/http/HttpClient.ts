@@ -55,6 +55,16 @@ export class HttpClient {
       throw error;
     }
   }
+
+  /**
+   * Performs a GET request forcing the usage of the configured CORS proxy.
+   *
+   * @param url Target endpoint URL.
+   * @returns Promise resolving to the parsed payload.
+   */
+  async getExternal<T>(url: string): Promise<T> {
+    return this.get<T>(url, true);
+  }
 }
 
 export const httpClient = new HttpClient({

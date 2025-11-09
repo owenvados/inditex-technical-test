@@ -28,7 +28,7 @@ export class ITunesPodcastClient {
    */
   async getTopPodcasts(): Promise<TopPodcastsResponse> {
     const url = buildTopPodcastsFeedUrl();
-    return this.client.get<TopPodcastsResponse>(url, true);
+    return this.client.getExternal<TopPodcastsResponse>(url);
   }
 
   /**
@@ -44,7 +44,7 @@ export class ITunesPodcastClient {
 
     const url = buildPodcastLookupUrl(podcastId);
     console.log(`[ITunesPodcastClient] Fetching podcast detail: ${podcastId}`);
-    const data = await this.client.get<PodcastLookupResponse>(url, true);
+    const data = await this.client.getExternal<PodcastLookupResponse>(url);
     console.log(`[ITunesPodcastClient] Podcast detail fetched: ${podcastId}`);
     return data;
   }
