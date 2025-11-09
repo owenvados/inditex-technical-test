@@ -1,10 +1,18 @@
-import { buildTopPodcastsFeedUrl } from '@podcasts/infrastructure/config/apiConfig';
+import {
+  buildPodcastLookupUrl,
+  buildTopPodcastsFeedUrl,
+} from '@podcasts/infrastructure/config/apiConfig';
 import { HttpClient, httpClient } from '@shared/infrastructure/http/HttpClient';
 
 export type TopPodcastsResponse = {
   feed?: {
     entry?: unknown[];
   };
+};
+
+export type PodcastLookupResponse = {
+  resultCount?: number;
+  results?: unknown[];
 };
 
 /**
@@ -21,6 +29,24 @@ export class ITunesPodcastClient {
   async getTopPodcasts(): Promise<TopPodcastsResponse> {
     const url = buildTopPodcastsFeedUrl();
     return this.client.get<TopPodcastsResponse>(url, true);
+  }
+
+  /**
+   * Retrieves the detailed podcast information including episodes.
+   *
+   * @param podcastId Identifier of the podcast to lookup.
+   * @returns Promise resolving with the lookup payload.
+   */
+  async getPodcastDetail(podcastId: string): Promise<PodcastLookupResponse> {
+    if (!podcastId || podcastId.trim() === '') {
+      throw new Error('Podcast ID is required');
+    }
+
+    const url = buildPodcastLookupUrl(podcastId);
+    console.log(`[ITunesPodcastClient] Fetching podcast detail: ${podcastId}`);
+    const data = await this.client.get<PodcastLookupResponse>(url, true);
+    console.log(`[ITunesPodcastClient] Podcast detail fetched: ${podcastId}`);
+    return data;
   }
 }
 

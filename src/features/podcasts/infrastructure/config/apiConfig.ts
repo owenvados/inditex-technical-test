@@ -6,6 +6,8 @@ export const ITUNES_ENDPOINTS = {
   TOP_PODCASTS_FEED_PATH: '/us/rss/toppodcasts',
   TOP_PODCAST_LIMIT: 100,
   MUSIC_GENRE_ID: '1310',
+  LOOKUP_PATH: '/lookup',
+  LOOKUP_EPISODE_LIMIT: 20,
 };
 
 /**
@@ -20,3 +22,24 @@ export const buildTopPodcastsFeedUrl = (
   genreId = ITUNES_ENDPOINTS.MUSIC_GENRE_ID,
 ): string =>
   `${ITUNES_ENDPOINTS.BASE_URL}${ITUNES_ENDPOINTS.TOP_PODCASTS_FEED_PATH}/limit=${limit}/genre=${genreId}/json`;
+
+/**
+ * Builds the lookup endpoint URL to retrieve podcast detail and episodes.
+ *
+ * @param podcastId Target podcast identifier.
+ * @param limit Maximum number of episodes to fetch.
+ * @returns Fully qualified lookup endpoint URL.
+ */
+export const buildPodcastLookupUrl = (
+  podcastId: string,
+  episodeLimit = ITUNES_ENDPOINTS.LOOKUP_EPISODE_LIMIT,
+): string => {
+  const searchParams = new URLSearchParams({
+    id: podcastId,
+    media: 'podcast',
+    entity: 'podcastEpisode',
+    limit: String(episodeLimit),
+  });
+
+  return `${ITUNES_ENDPOINTS.BASE_URL}${ITUNES_ENDPOINTS.LOOKUP_PATH}?${searchParams.toString()}`;
+};
