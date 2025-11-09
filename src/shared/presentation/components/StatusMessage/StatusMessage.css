@@ -1,0 +1,21 @@
+.status-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: #475569;
+  font-weight: 500;
+}
+
+.status-message__text {
+  font-size: 1rem;
+}
+
+.status-message__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

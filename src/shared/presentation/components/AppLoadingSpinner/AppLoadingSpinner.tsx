@@ -7,13 +7,7 @@ import './AppLoadingSpinner.css';
  * Props for the `AppLoadingSpinner` component.
  */
 export interface AppLoadingSpinnerProps {
-  /**
-   * Additional class names applied to the spinner container.
-   */
   className?: string;
-  /**
-   * Overrides the default `data-testid` used in tests.
-   */
   dataTestId?: string;
 }
 
@@ -41,7 +35,7 @@ export const AppLoadingSpinner: React.FC<AppLoadingSpinnerProps> = ({ className,
       aria-label="Loading"
       data-testid={testId}
     >
-      <span className="app-loading-spinner__icon" />{' '}
+      <span className="app-loading-spinner__icon" />
     </div>
   );
 };

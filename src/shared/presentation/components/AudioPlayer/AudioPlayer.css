@@ -1,0 +1,10 @@
+.audio-player {
+  width: 100%;
+  margin-top: 1.5rem;
+  outline: none;
+}
+
+.audio-player:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
