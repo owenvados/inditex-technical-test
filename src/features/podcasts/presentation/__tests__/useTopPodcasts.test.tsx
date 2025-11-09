@@ -14,7 +14,7 @@ jest.mock('@podcasts/application/use-cases/GetTopPodcasts', () => ({
 
 jest.mock('@podcasts/infrastructure/repositories/ITunesPodcastRepository');
 
-const wrapper = ({ children }: { children: React.ReactNode }): JSX.Element => (
+const wrapper = ({ children }: { children: React.ReactNode }): React.ReactElement => (
   <LoadingStateProvider>{children}</LoadingStateProvider>
 );
 
