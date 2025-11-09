@@ -18,6 +18,7 @@ module.exports = {
       "@features": path.resolve(__dirname, "src/features"),
       '@podcasts': path.resolve(__dirname, 'src/features/podcasts'),
       "@styles": path.resolve(__dirname, "src/styles"),
+      "@config": path.resolve(__dirname, "src/core/config"),
     },
   },
   module: {

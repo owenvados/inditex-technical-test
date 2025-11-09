@@ -27,10 +27,10 @@
       "@shared/*": ["shared/*"],
       "@features/*": ["features/*"],
       "@podcasts/*": ["features/podcasts/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@config/*": ["core/config/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
-

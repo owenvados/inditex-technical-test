@@ -7,6 +7,7 @@ const config: Config = {
   moduleNameMapper: {
     '^@app/(.*)$': '<rootDir>/src/app/$1',
     '^@core/(.*)$': '<rootDir>/src/core/$1',
+    '^@config/(.*)$': '<rootDir>/src/core/config/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@features/(.*)$': '<rootDir>/src/features/$1',
     '^@podcasts/(.*)$': '<rootDir>/src/features/podcasts/$1',
