@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import StatusMessage from '@shared/presentation/components/StatusMessage';
 
 import PodcastCard from '../PodcastCard';
 import './PodcastList.css';
@@ -10,12 +12,12 @@ export interface PodcastListProps {
 /**
  * Grid that displays a collection of podcasts.
  *
- * @param {PodcastListProps} props - List of podcasts to render.
- * @returns {JSX.Element} A responsive grid of podcast cards or an empty placeholder.
+ * @param props - List of podcasts to render.
+ * @returns A responsive grid of podcast cards or an empty placeholder.
  */
-export const PodcastList: React.FC<PodcastListProps> = ({ podcasts }: PodcastListProps) => {
+export const PodcastList: React.FC<PodcastListProps> = ({ podcasts }) => {
   if (podcasts.length === 0) {
-    return <div className="empty-state">No podcasts found</div>;
+    return <StatusMessage message="No podcasts found" dataTestId="podcast-list-empty" />;
   }
 
   return (
