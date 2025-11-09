@@ -1,5 +1,8 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
+/**
+ * Contract exposed by the loading state context.
+ */
 interface LoadingStateContextValue {
   isLoading: boolean;
   startLoading: () => void;
@@ -11,13 +14,17 @@ const LoadingStateContext = createContext<LoadingStateContextValue | undefined>(
 export interface LoadingStateProviderProps {
   children: React.ReactNode;
   /**
-   * Optional flag enabling the loading state when the provider mounts. Useful for tests.
+   * When true the provider starts with the loading flag enabled.
    */
   initialLoading?: boolean;
 }
 
 /**
  * Provider that keeps track of asynchronous operations and exposes a global loading flag.
+ *
+ * @param props.children React subtree allowed to access the loading context.
+ * @param props.initialLoading Optional flag enabling the loading state on mount.
+ * @returns Provider element wrapping the given children.
  */
 export const LoadingStateProvider: React.FC<LoadingStateProviderProps> = ({
   children,
@@ -47,6 +54,8 @@ export const LoadingStateProvider: React.FC<LoadingStateProviderProps> = ({
 
 /**
  * Hook returning the global loading state and helpers to control it.
+ *
+ * @returns Context value containing the current loading flag and control helpers.
  */
 export const useLoadingState = (): LoadingStateContextValue => {
   const context = useContext(LoadingStateContext);
