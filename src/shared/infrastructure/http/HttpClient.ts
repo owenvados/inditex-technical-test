@@ -62,9 +62,6 @@ export class HttpClient {
    * @param url Target endpoint URL.
    * @returns Promise resolving to the parsed payload.
    */
-  async getExternal<T>(url: string): Promise<T> {
-    return this.get<T>(url, true);
-  }
 }
 
 export const httpClient = new HttpClient({
