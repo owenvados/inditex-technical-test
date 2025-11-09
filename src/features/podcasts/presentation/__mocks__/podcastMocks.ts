@@ -1,4 +1,6 @@
+import type { Episode } from '@podcasts/domain/entities/Episode';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
 
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/300';
 
@@ -27,3 +29,27 @@ export const MOCK_PODCASTS: Podcast[] = [
     summary: 'Artists break down their songs and tell the story of how they were made.',
   },
 ];
+
+export const MOCK_EPISODES: Episode[] = [
+  {
+    id: 'episode-1',
+    title: 'Episode One',
+    description: 'First episode description.',
+    audioUrl: 'https://example.com/audio/episode-1.mp3',
+    publishedAt: new Date('2025-01-10T00:00:00Z'),
+    durationMs: 1_800_000,
+  },
+  {
+    id: 'episode-2',
+    title: 'Episode Two',
+    description: 'Second episode description.',
+    audioUrl: 'https://example.com/audio/episode-2.mp3',
+    publishedAt: new Date('2025-01-05T00:00:00Z'),
+    durationMs: 2_400_000,
+  },
+];
+
+export const MOCK_PODCAST_DETAIL: PodcastDetail = {
+  podcast: MOCK_PODCASTS[0],
+  episodes: MOCK_EPISODES,
+};

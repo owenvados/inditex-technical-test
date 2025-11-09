@@ -1,0 +1,62 @@
+.podcast-sidebar__link {
+  display: block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.podcast-sidebar__link:hover {
+  transform: scale(1.02);
+}
+
+.podcast-sidebar__image {
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.podcast-sidebar__info {
+  text-align: center;
+}
+
+.podcast-sidebar__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.podcast-sidebar__author {
+  font-size: 1rem;
+  color: #475569;
+  font-style: italic;
+}
+
+.podcast-sidebar__description {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.podcast-sidebar__link {
+  display: block;
+  text-decoration: none;
+  transition: transform 0.2s ease-in-out;
+}
+
+.podcast-sidebar__link:hover {
+  transform: scale(1.02);
+}
+
+.podcast-sidebar__description h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+
+.podcast-sidebar__description p {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.6;
+}
