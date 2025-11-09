@@ -1,0 +1,14 @@
+.podcast-detail-page {
+  padding: 2rem;
+}
+
+.podcast-detail-page__heading {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.podcast-detail-page__description {
+  margin: 0 0 1rem;
+  color: #4b5563;
+}

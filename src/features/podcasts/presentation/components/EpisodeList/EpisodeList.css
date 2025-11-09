@@ -1,0 +1,68 @@
+.episode-list {
+  background: var(--background-white, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color, rgba(15, 23, 42, 0.1));
+  overflow: hidden;
+}
+
+.episode-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.episode-table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid var(--border-color, #e5e7eb);
+}
+
+.episode-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-color, #111827);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.episode-row {
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  transition: background-color var(--transition-speed, 0.2s);
+}
+
+.episode-row:hover {
+  background-color: #f8f9fa;
+}
+
+.episode-row:last-child {
+  border-bottom: none;
+}
+
+.episode-table td {
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-color, #111827);
+}
+
+.episode-title-cell {
+  max-width: 420px;
+}
+
+.episode-date,
+.episode-duration {
+  color: var(--text-secondary, #6b7280);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .episode-table th,
+  .episode-table td {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .episode-title-cell {
+    max-width: 200px;
+  }
+}
