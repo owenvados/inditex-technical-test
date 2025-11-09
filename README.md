@@ -78,13 +78,14 @@ The output bundle will be generated in the `dist/` directory.
 
 ## 🏷️ Release Tags
 
-| Tag                     | Summary                                                    |
-| ----------------------- | ---------------------------------------------------------- |
-| `v0.3.0-main-view`      | Podcasts main catalogue flow with routing and testing.     |
-| `v0.2.1-routing`        | Client-side routing shell with placeholder pages.          |
-| `v0.2.0-architecture`   | Feature-based hexagonal scaffold with documented proposal. |
-| `v0.1.1-tooling-update` | Jest, RTL, and documentation for project tooling.          |
-| `v0.1.0-setup`          | Initial setup with Webpack, TypeScript, and Husky.         |
+| Tag                        | Summary                                                           |
+| -------------------------- | ----------------------------------------------------------------- |
+| `v0.3.1-loading-spinner`   | Global loading provider with header spinner and supporting tests. |
+| `v0.3.0-main-view`         | Podcasts main catalogue flow with routing and testing.            |
+| `v0.2.1-routing`           | Client-side routing shell with placeholder pages.                 |
+| `v0.2.0-architecture`      | Feature-based hexagonal scaffold with documented proposal.        |
+| `v0.1.1-tooling-update`    | Jest, RTL, and documentation for project tooling.                 |
+| `v0.1.0-setup`             | Initial setup with Webpack, TypeScript, and Husky.                |
 
 ## 🏗️ Technical Stack
 
