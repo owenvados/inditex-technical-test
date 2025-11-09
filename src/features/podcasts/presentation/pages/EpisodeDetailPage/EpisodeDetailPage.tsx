@@ -62,7 +62,7 @@ export const EpisodeDetailPage: React.FC = () => {
 
   return (
     <section className="episode-detail-page" data-testid="episode-detail-page">
-      <PodcastSidebar podcast={podcastDetail.podcast} linkToPodcast />
+      <PodcastSidebar podcast={podcastDetail.podcast} />
 
       <main className="episode-detail-page__main">
         <article className="episode-detail">
