@@ -6,7 +6,14 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 jest.mock('@podcasts/presentation/hooks/usePodcastDetail');
 
+type UsePodcastDetailState = ReturnType<typeof usePodcastDetail>;
 const mockedUsePodcastDetail = usePodcastDetail as jest.MockedFunction<typeof usePodcastDetail>;
+
+const createState = (state: Partial<UsePodcastDetailState>): UsePodcastDetailState => ({
+  podcastDetail: null,
+  isLoading: false,
+  ...state,
+});
 
 describe('PodcastDetailPage', () => {
   const renderPage = (initialPath = '/podcast/79687345') => {
@@ -20,11 +27,9 @@ describe('PodcastDetailPage', () => {
   };
 
   it('renders podcast detail when data is loaded', () => {
-    mockedUsePodcastDetail.mockReturnValue({
-      podcastDetail: MOCK_PODCAST_DETAIL,
-      isLoading: false,
-      error: undefined,
-    });
+    mockedUsePodcastDetail.mockReturnValue(
+      createState({ podcastDetail: MOCK_PODCAST_DETAIL, isLoading: false }),
+    );
 
     renderPage();
 
@@ -36,27 +41,19 @@ describe('PodcastDetailPage', () => {
   });
 
   it('renders loading state', () => {
-    mockedUsePodcastDetail.mockReturnValue({
-      podcastDetail: null,
-      isLoading: true,
-      error: undefined,
-    });
+    mockedUsePodcastDetail.mockReturnValue(createState({ isLoading: true }));
 
     renderPage();
 
     expect(screen.getByTestId('podcast-detail-loading')).toBeInTheDocument();
   });
 
-  it('renders error state', () => {
-    mockedUsePodcastDetail.mockReturnValue({
-      podcastDetail: null,
-      isLoading: false,
-      error: 'Something went wrong',
-    });
+  it('renders empty state when detail is not available', () => {
+    mockedUsePodcastDetail.mockReturnValue(createState({}));
 
     renderPage();
 
-    expect(screen.getByTestId('podcast-detail-error')).toBeInTheDocument();
-    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(screen.getByTestId('podcast-detail-empty')).toBeInTheDocument();
+    expect(screen.getByText('Podcast not found.')).toBeInTheDocument();
   });
 });

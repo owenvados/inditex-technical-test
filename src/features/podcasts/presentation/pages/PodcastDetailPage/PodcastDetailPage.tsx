@@ -7,11 +7,13 @@ import { useParams } from 'react-router-dom';
 import './PodcastDetailPage.css';
 
 /**
- * Detail page presenting podcast metadata and its episodes catalogue.
+ * Page that displays the selected podcast metadata and its episodes list.
+ *
+ * @returns Section rendering loading, empty or detail states.
  */
 export const PodcastDetailPage: React.FC = () => {
   const { podcastId } = useParams();
-  const { podcastDetail, isLoading, error } = usePodcastDetail(podcastId);
+  const { podcastDetail, isLoading } = usePodcastDetail(podcastId);
 
   if (isLoading) {
     return (
@@ -20,17 +22,6 @@ export const PodcastDetailPage: React.FC = () => {
         data-testid="podcast-detail-loading"
       >
         <p>Loading podcast detail…</p>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section
-        className="podcast-detail-page podcast-detail-page--error"
-        data-testid="podcast-detail-error"
-      >
-        <p>{error}</p>
       </section>
     );
   }

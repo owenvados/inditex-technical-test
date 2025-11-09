@@ -7,11 +7,13 @@ import { Link, useParams } from 'react-router-dom';
 import './EpisodeDetailPage.css';
 
 /**
- * Detail page for a single episode, providing contextual navigation and metadata.
+ * Page that presents the details for a single episode within a podcast.
+ *
+ * @returns Section showing loading, fallback or the episode content.
  */
 export const EpisodeDetailPage: React.FC = () => {
   const { podcastId, episodeId } = useParams();
-  const { podcastDetail, isLoading, error } = usePodcastDetail(podcastId);
+  const { podcastDetail, isLoading } = usePodcastDetail(podcastId);
 
   if (isLoading) {
     return (
@@ -20,17 +22,6 @@ export const EpisodeDetailPage: React.FC = () => {
         data-testid="episode-detail-loading"
       >
         <p>Loading episode…</p>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section
-        className="episode-detail-page episode-detail-page--error"
-        data-testid="episode-detail-error"
-      >
-        <p>{error}</p>
       </section>
     );
   }

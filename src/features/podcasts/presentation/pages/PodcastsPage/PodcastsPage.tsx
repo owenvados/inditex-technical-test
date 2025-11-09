@@ -6,10 +6,9 @@ import React from 'react';
 import './PodcastsPage.css';
 
 /**
- * Entry page for the podcasts catalogue displaying the main list layout.
- * Retrieves data through the useTopPodcasts hook (container) and delegates rendering to PodcastList.
+ * Page that lists the top podcasts using the catalogue hook.
  *
- * @returns {JSX.Element} The podcasts catalogue section with loading state handling.
+ * @returns Section showing a loading placeholder or the podcast grid.
  */
 export const PodcastsPage: React.FC = () => {
   const { podcasts, isLoading } = useTopPodcasts();
