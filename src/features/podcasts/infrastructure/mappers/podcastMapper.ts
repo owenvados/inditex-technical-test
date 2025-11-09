@@ -1,10 +1,18 @@
-import type { Episode } from '@podcasts/domain/entities/Episode';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
 import type {
   PodcastLookupResponse,
   TopPodcastsResponse,
 } from '@podcasts/infrastructure/api/ITunesPodcastClient';
+import type { PodcastEpisodeRecord } from '@podcasts/infrastructure/mappers/episodeMapper';
+import { mapEpisodesFromLookupRecords } from '@podcasts/infrastructure/mappers/episodeMapper';
+import {
+  DEFAULT_PODCAST_AUTHOR,
+  DEFAULT_PODCAST_ID,
+  DEFAULT_PODCAST_SUMMARY,
+  DEFAULT_PODCAST_TITLE,
+  FALLBACK_PODCAST_IMAGE,
+} from '@podcasts/infrastructure/mappers/mapperConstants';
 
 interface FeedEntry {
   id?: {
@@ -24,30 +32,6 @@ interface FeedEntry {
   };
 }
 
-const FALLBACK_IMAGE = 'https://via.placeholder.com/300';
-
-/**
- * Extracts the podcast identifier from the RSS feed entry.
- */
-const getPodcastId = (entry: FeedEntry): string => entry.id?.attributes?.['im:id'] ?? 'unknown-id';
-
-/**
- * Retrieves the podcast artwork URL, falling back to a placeholder if missing.
- */
-const getImageUrl = (entry: FeedEntry): string =>
-  entry['im:image']?.[2]?.label ?? entry['im:image']?.[0]?.label ?? FALLBACK_IMAGE;
-
-/**
- * Maps an RSS feed entry into the domain `Podcast` entity.
- */
-const toPodcast = (entry: FeedEntry): Podcast => ({
-  id: getPodcastId(entry),
-  title: entry['im:name']?.label ?? 'Unknown podcast',
-  author: entry['im:artist']?.label ?? 'Unknown author',
-  imageUrl: getImageUrl(entry),
-  summary: entry.summary?.label ?? 'Description not available.',
-});
-
 interface PodcastLookupRecord {
   collectionId?: number;
   collectionName?: string;
@@ -58,80 +42,56 @@ interface PodcastLookupRecord {
   description?: string;
 }
 
-interface PodcastEpisodeRecord {
-  trackId?: number;
-  trackName?: string;
-  description?: string;
-  shortDescription?: string;
-  episodeUrl?: string;
-  previewUrl?: string;
-  releaseDate?: string;
-  trackTimeMillis?: number;
-  episodeGuid?: string;
-}
+const resolvePodcastId = (record: PodcastLookupRecord): string =>
+  String(record.collectionId ?? record.trackName ?? DEFAULT_PODCAST_ID);
+
+const resolveFeedId = (entry: FeedEntry): string =>
+  entry.id?.attributes?.['im:id'] ?? DEFAULT_PODCAST_ID;
+
+const resolveTitle = (entry: FeedEntry): string => entry['im:name']?.label ?? DEFAULT_PODCAST_TITLE;
+
+const resolveAuthor = (entry: FeedEntry): string =>
+  entry['im:artist']?.label ?? DEFAULT_PODCAST_AUTHOR;
+
+const resolveSummary = (entry: FeedEntry): string =>
+  entry.summary?.label ?? DEFAULT_PODCAST_SUMMARY;
+
+const resolveImageUrl = (entry: FeedEntry): string =>
+  entry['im:image']?.[2]?.label ?? entry['im:image']?.[0]?.label ?? FALLBACK_PODCAST_IMAGE;
+
+const resolveDetailImageUrl = (record: PodcastLookupRecord): string =>
+  record.artworkUrl600 ?? record.artworkUrl100 ?? FALLBACK_PODCAST_IMAGE;
+
+const resolveDetailTitle = (record: PodcastLookupRecord): string =>
+  record.collectionName ?? record.trackName ?? DEFAULT_PODCAST_TITLE;
+
+const resolveDetailAuthor = (record: PodcastLookupRecord): string =>
+  record.artistName ?? DEFAULT_PODCAST_AUTHOR;
+
+const resolveDetailSummary = (record: PodcastLookupRecord): string =>
+  record.description ?? DEFAULT_PODCAST_SUMMARY;
 
 /**
- * Builds a safe Date instance from the API response.
+ * Maps a feed entry into the domain {@link Podcast} entity.
  */
-const getSafeDate = (value?: string): Date => {
-  const parsed = value ? new Date(value) : undefined;
-  return parsed && !Number.isNaN(parsed.valueOf()) ? parsed : new Date(0);
-};
-
-/**
- * Returns the best available description for a podcast episode.
- */
-const getEpisodeDescription = (episode: PodcastEpisodeRecord): string =>
-  episode.description ?? episode.shortDescription ?? 'Description not available.';
-
-/**
- * Returns the preferred audio URL for a podcast episode.
- */
-const getEpisodeAudio = (episode: PodcastEpisodeRecord): string =>
-  episode.episodeUrl ?? episode.previewUrl ?? '';
-
-/**
- * Maps an episode record from the lookup response to the domain `Episode` entity.
- */
-const mapLookupEpisodeToDomain = (episode: PodcastEpisodeRecord, index: number): Episode => ({
-  id: String(episode.episodeGuid ?? episode.trackId ?? `episode-${index}`),
-  title: episode.trackName ?? 'Untitled episode',
-  description: getEpisodeDescription(episode),
-  audioUrl: getEpisodeAudio(episode),
-  publishedAt: getSafeDate(episode.releaseDate),
-  durationMs: episode.trackTimeMillis ?? 0,
+const mapFeedEntryToPodcast = (entry: FeedEntry): Podcast => ({
+  id: resolveFeedId(entry),
+  title: resolveTitle(entry),
+  author: resolveAuthor(entry),
+  imageUrl: resolveImageUrl(entry),
+  summary: resolveSummary(entry),
 });
 
 /**
- * Maps the podcast lookup record and its episodes into the domain `PodcastDetail` aggregate.
- */
-const mapLookupPodcastToDomain = (
-  podcastRecord: PodcastLookupRecord,
-  episodeRecords: PodcastEpisodeRecord[],
-): PodcastDetail => {
-  const podcast: Podcast = {
-    id: String(podcastRecord.collectionId ?? podcastRecord.trackName ?? 'unknown-podcast'),
-    title: podcastRecord.collectionName ?? podcastRecord.trackName ?? 'Unknown podcast',
-    author: podcastRecord.artistName ?? 'Unknown author',
-    imageUrl: podcastRecord.artworkUrl600 ?? podcastRecord.artworkUrl100 ?? FALLBACK_IMAGE,
-    summary: podcastRecord.description ?? 'Description not available.',
-  };
-
-  const episodes = episodeRecords.map((record, index) => mapLookupEpisodeToDomain(record, index));
-
-  return { podcast, episodes };
-};
-
-/**
- * Maps the iTunes RSS feed response to the domain podcast entity list.
+ * Converts RSS feed data to domain podcasts.
  */
 export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
   const entries = response.feed?.entry ?? [];
-  return entries.map((entry) => toPodcast(entry as FeedEntry));
+  return entries.map((entry) => mapFeedEntryToPodcast(entry as FeedEntry));
 };
 
 /**
- * Maps the lookup API response to a podcast detail aggregate.
+ * Combines podcast lookup metadata and episodes into the {@link PodcastDetail} aggregate.
  */
 export const mapToPodcastDetail = (apiResponse: PodcastLookupResponse): PodcastDetail => {
   const results = (apiResponse.results ?? []) as PodcastLookupRecord[];
@@ -141,13 +101,15 @@ export const mapToPodcastDetail = (apiResponse: PodcastLookupResponse): PodcastD
   }
 
   const [podcastRecord, ...episodeRecords] = results;
-  return mapLookupPodcastToDomain(podcastRecord, episodeRecords as PodcastEpisodeRecord[]);
-};
+  const podcast: Podcast = {
+    id: resolvePodcastId(podcastRecord),
+    title: resolveDetailTitle(podcastRecord),
+    author: resolveDetailAuthor(podcastRecord),
+    imageUrl: resolveDetailImageUrl(podcastRecord),
+    summary: resolveDetailSummary(podcastRecord),
+  };
 
-/**
- * Maps the lookup API response to an array of episodes only.
- */
-export const mapToEpisodeList = (episodesData: unknown[]): Episode[] =>
-  (episodesData as PodcastEpisodeRecord[]).map((record, index) =>
-    mapLookupEpisodeToDomain(record, index),
-  );
+  const episodes = mapEpisodesFromLookupRecords(episodeRecords as PodcastEpisodeRecord[]);
+
+  return { podcast, episodes };
+};

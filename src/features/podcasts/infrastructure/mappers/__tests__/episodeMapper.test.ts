@@ -1,0 +1,72 @@
+import {
+  type PodcastEpisodeRecord,
+  mapEpisodeFromLookup,
+  mapEpisodesFromLookupRecords,
+} from '@podcasts/infrastructure/mappers/episodeMapper';
+
+const createEpisodeRecord = (
+  overrides: Partial<PodcastEpisodeRecord> = {},
+): PodcastEpisodeRecord => ({
+  trackId: 123,
+  trackName: 'Sample track',
+  description: 'Long description',
+  shortDescription: 'Short description',
+  episodeUrl: 'https://cdn.example.com/audio.mp3',
+  releaseDate: '2025-11-08T06:16:06Z',
+  trackTimeMillis: 3600000,
+  episodeGuid: 'guid',
+  ...overrides,
+});
+
+describe('episodeMapper', () => {
+  it('maps a lookup record to Episode using trackId as identifier', () => {
+    const result = mapEpisodeFromLookup(createEpisodeRecord());
+
+    expect(result).toMatchObject({
+      id: '123',
+      title: 'Sample track',
+      description: 'Long description',
+      audioUrl: 'https://cdn.example.com/audio.mp3',
+      durationMs: 3600000,
+      publishedAt: expect.any(Date),
+    });
+  });
+
+  it('falls back to episodeGuid when trackId is missing', () => {
+    const record = createEpisodeRecord({ trackId: undefined, episodeGuid: 'episode-guid' });
+
+    expect(mapEpisodeFromLookup(record).id).toBe('episode-guid');
+  });
+
+  it('falls back to default values when metadata is missing', () => {
+    const record = createEpisodeRecord({
+      trackId: undefined,
+      episodeGuid: undefined,
+      trackName: undefined,
+      description: undefined,
+      shortDescription: undefined,
+      episodeUrl: undefined,
+      previewUrl: undefined,
+      releaseDate: undefined,
+      trackTimeMillis: undefined,
+    });
+
+    const result = mapEpisodeFromLookup(record);
+
+    expect(result.id).toBe('missing-episode-id');
+    expect(result.title).toBe('Untitled episode');
+    expect(result.description).toBe('Description not available.');
+    expect(result.audioUrl).toBe('');
+    expect(result.publishedAt).toBeInstanceOf(Date);
+    expect(result.durationMs).toBe(0);
+  });
+
+  it('maps collections of lookup records', () => {
+    const records = [createEpisodeRecord({ trackId: 1 }), createEpisodeRecord({ trackId: 2 })];
+
+    const episodes = mapEpisodesFromLookupRecords(records);
+
+    expect(episodes).toHaveLength(2);
+    expect(episodes.map((episode) => episode.id)).toEqual(['1', '2']);
+  });
+});
