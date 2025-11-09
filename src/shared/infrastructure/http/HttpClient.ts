@@ -52,6 +52,12 @@ export class HttpClient {
       return (await response.json()) as T;
     } catch (error) {
       console.error('[HttpClient] GET error:', error);
+
+      const isNetworkError = error instanceof TypeError;
+      if (!useCorsProxy && this.corsProxy && isNetworkError) {
+        return this.get<T>(url, true);
+      }
+
       throw error;
     }
   }
