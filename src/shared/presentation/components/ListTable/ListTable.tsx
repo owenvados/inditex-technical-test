@@ -6,21 +6,9 @@ import './ListTable.css';
  * Describes the configuration of a column within `ListTable`.
  */
 export interface ListTableColumn<T> {
-  /**
-   * Column header label.
-   */
   header: string;
-  /**
-   * Custom class name applied to the header cell.
-   */
   headerClassName?: string;
-  /**
-   * Custom class name applied to each row cell.
-   */
   cellClassName?: string;
-  /**
-   * Function that renders the cell contents for a given row item.
-   */
   cell: (item: T) => React.ReactNode;
 }
 
@@ -28,29 +16,11 @@ export interface ListTableColumn<T> {
  * Props for the `ListTable` component.
  */
 export interface ListTableProps<T> {
-  /**
-   * Collection of items to render.
-   */
   data: T[];
-  /**
-   * Column definitions describing how to display the data.
-   */
   columns: Array<ListTableColumn<T>>;
-  /**
-   * Function that returns a unique key for each row.
-   */
   getRowKey: (item: T) => React.Key;
-  /**
-   * Additional CSS classes for the table container.
-   */
   className?: string;
-  /**
-   * Optional test id used in testing scenarios.
-   */
   tableTestId?: string;
-  /**
-   * Optional node to render when there is no data.
-   */
   emptyState?: React.ReactNode;
 }
 

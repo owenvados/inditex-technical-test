@@ -4,6 +4,11 @@ import { Link } from 'react-router-dom';
 
 import './Header.css';
 
+/**
+ * Application header featuring the brand link and global loading indicator.
+ *
+ * @returns Fixed header element displayed on every page.
+ */
 export const Header: React.FC = () => {
   return (
     <header className="app-header">

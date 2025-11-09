@@ -6,9 +6,6 @@ import './Sidebar.css';
  * Props for the `Sidebar` component.
  */
 export interface SidebarProps {
-  /**
-   * Content rendered inside the sidebar container.
-   */
   children: React.ReactNode;
 }
 

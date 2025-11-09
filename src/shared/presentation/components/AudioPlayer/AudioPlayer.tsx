@@ -6,29 +6,11 @@ import './AudioPlayer.css';
  * Props for the `AudioPlayer` component.
  */
 export interface AudioPlayerProps {
-  /**
-   * Source URL of the audio track.
-   */
   src: string;
-  /**
-   * MIME type of the audio source.
-   */
   type?: string;
-  /**
-   * Preload behaviour for the audio element.
-   */
   preload?: 'auto' | 'metadata' | 'none';
-  /**
-   * Optional controls list passed directly to the native element.
-   */
   controlsList?: string;
-  /**
-   * Additional class names applied to the audio element.
-   */
   className?: string;
-  /**
-   * Optional test id forwarded to the audio element.
-   */
   dataTestId?: string;
 }
 

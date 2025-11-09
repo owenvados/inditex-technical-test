@@ -6,21 +6,9 @@ import './StatusMessage.css';
  * Props for the `StatusMessage` component.
  */
 export interface StatusMessageProps {
-  /**
-   * Primary text displayed in the placeholder.
-   */
   message: string;
-  /**
-   * Optional content rendered below the main message (buttons, links, etc.).
-   */
   children?: React.ReactNode;
-  /**
-   * Extra class names appended to the placeholder container.
-   */
   className?: string;
-  /**
-   * Optional test id forwarded to the root element.
-   */
   dataTestId?: string;
 }
 
