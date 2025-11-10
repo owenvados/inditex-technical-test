@@ -2,6 +2,7 @@ import { GetTopPodcasts } from '@podcasts/application/use-cases/GetTopPodcasts';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
+import { logError } from '@shared/utils/errors/errorLogger';
 import { useEffect, useState } from 'react';
 
 const repository = new ITunesPodcastRepository();
@@ -40,7 +41,7 @@ export const useTopPodcasts = (): UseTopPodcastsState => {
           setState({ podcasts, isLoading: false });
         }
       } catch (error) {
-        console.error('[useTopPodcasts] Failed to load podcasts', error);
+        logError('useTopPodcasts', error);
 
         if (!cancelled) {
           setState({ podcasts: [], isLoading: false });

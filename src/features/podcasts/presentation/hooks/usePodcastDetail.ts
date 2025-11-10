@@ -2,6 +2,7 @@ import { GetPodcastDetail } from '@podcasts/application/use-cases/GetPodcastDeta
 import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
+import { logError } from '@shared/utils/errors/errorLogger';
 import { useEffect, useState } from 'react';
 
 const repository = new ITunesPodcastRepository();
@@ -48,7 +49,7 @@ export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetai
           setState({ podcastDetail: detail, isLoading: false });
         }
       } catch (error) {
-        console.error('[usePodcastDetail] Failed to retrieve podcast detail', error);
+        logError('usePodcastDetail', error);
 
         if (!cancelled) {
           setState({ podcastDetail: null, isLoading: false });
