@@ -30,6 +30,12 @@ interface FeedEntry {
   summary?: {
     label?: string;
   };
+  ['itunes:summary']?: {
+    label?: string;
+  };
+  description?: {
+    label?: string;
+  };
 }
 
 interface PodcastLookupRecord {
@@ -53,8 +59,34 @@ const resolveTitle = (entry: FeedEntry): string => entry['im:name']?.label ?? DE
 const resolveAuthor = (entry: FeedEntry): string =>
   entry['im:artist']?.label ?? DEFAULT_PODCAST_AUTHOR;
 
-const resolveSummary = (entry: FeedEntry): string =>
-  entry.summary?.label ?? DEFAULT_PODCAST_SUMMARY;
+type SummaryField = { label?: string } | string | null | undefined;
+
+const extractSummaryValue = (field: SummaryField): string | undefined => {
+  if (!field) {
+    return undefined;
+  }
+
+  if (typeof field === 'string') {
+    const trimmed = field.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  }
+
+  const label = field.label?.trim();
+  return label && label.length > 0 ? label : undefined;
+};
+
+const resolveSummary = (entry: FeedEntry): string => {
+  const candidates: SummaryField[] = [entry.summary, entry['itunes:summary'], entry.description];
+
+  for (const candidate of candidates) {
+    const value = extractSummaryValue(candidate);
+    if (value) {
+      return value;
+    }
+  }
+
+  return DEFAULT_PODCAST_SUMMARY;
+};
 
 const resolveImageUrl = (entry: FeedEntry): string =>
   entry['im:image']?.[2]?.label ?? entry['im:image']?.[0]?.label ?? FALLBACK_PODCAST_IMAGE;
