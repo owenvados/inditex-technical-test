@@ -1,3 +1,4 @@
+import { SWRProvider } from '@core/providers/SWRProvider';
 import AppRouter from '@core/router/AppRouter';
 import { LoadingStateProvider } from '@shared/hooks/useLoadingState';
 import Header from '@shared/presentation/components/Header';
@@ -12,14 +13,16 @@ import { BrowserRouter } from 'react-router-dom';
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <LoadingStateProvider>
-        <div className="app-container">
-          <Header />
-          <main className="app-container__content">
-            <AppRouter />
-          </main>
-        </div>
-      </LoadingStateProvider>
+      <SWRProvider>
+        <LoadingStateProvider>
+          <div className="app-container">
+            <Header />
+            <main className="app-container__content">
+              <AppRouter />
+            </main>
+          </div>
+        </LoadingStateProvider>
+      </SWRProvider>
     </BrowserRouter>
   );
 };
