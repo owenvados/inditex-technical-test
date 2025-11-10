@@ -86,9 +86,18 @@ export class FeedContentClient {
       return cached;
     }
 
-    const feedContents = await this.client.getText(feedUrl, true, {
-      timeoutMs: DEFAULT_TIMEOUT_MS,
-    });
+    let feedContents: string;
+
+    try {
+      feedContents = await this.client.getText(feedUrl, false, {
+        timeoutMs: DEFAULT_TIMEOUT_MS,
+      });
+    } catch (error) {
+      console.warn('[FeedContentClient] Direct feed request failed, retrying via proxy', error);
+      feedContents = await this.client.getText(feedUrl, true, {
+        timeoutMs: DEFAULT_TIMEOUT_MS,
+      });
+    }
 
     const parser = new DOMParser();
     const document = parser.parseFromString(feedContents, 'text/xml');
