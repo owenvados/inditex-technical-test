@@ -80,6 +80,7 @@ The output bundle will be generated in the `dist/` directory.
 
 | Tag                        | Summary                                                           |
 | -------------------------- | ----------------------------------------------------------------- |
+| `v0.4.2-feed-resilience`    | Feed summary fallbacks, direct RSS retry logic, navigation refinements, and centralized error logging. |
 | `v0.4.1-network`            | HTTP client fallback improvements, loading state hook coverage, and consolidated styles entry. |
 | `v0.4.0-podcast-detail`     | Podcast detail and episode views, episode mapper refactor, and feature tests. |
 | `v0.3.1-loading-spinner`   | Global loading provider with header spinner and supporting tests. |
