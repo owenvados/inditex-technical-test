@@ -14,6 +14,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 - _No entries._
 
+## [v0.5.0-cache] - 2025-11-10
+
+### Added
+
+- `SWRProvider` wrapping the application to persist the SWR cache across sessions.
+- Shared `LocalStorageCache` adapter and `PodcastCache` infrastructure module with 24h TTL constants.
+- SWR-powered `useTopPodcasts` and `usePodcastDetail` hooks, including their updated test harnesses.
+
+### Changed
+
+- Documentation describing the SWR + localStorage caching strategy and new release tag.
+
 ## [v0.4.1-network] - 2025-11-10
 
 ### Added

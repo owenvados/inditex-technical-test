@@ -78,17 +78,18 @@ The output bundle will be generated in the `dist/` directory.
 
 ## 🏷️ Release Tags
 
-| Tag                        | Summary                                                           |
-| -------------------------- | ----------------------------------------------------------------- |
-| `v0.4.2-feed-resilience`    | Feed summary fallbacks, direct RSS retry logic, navigation refinements, and centralized error logging. |
-| `v0.4.1-network`            | HTTP client fallback improvements, loading state hook coverage, and consolidated styles entry. |
-| `v0.4.0-podcast-detail`     | Podcast detail and episode views, episode mapper refactor, and feature tests. |
-| `v0.3.1-loading-spinner`   | Global loading provider with header spinner and supporting tests. |
-| `v0.3.0-main-view`         | Podcasts main catalogue flow with routing and testing.            |
-| `v0.2.1-routing`           | Client-side routing shell with placeholder pages.                 |
-| `v0.2.0-architecture`      | Feature-based hexagonal scaffold with documented proposal.        |
-| `v0.1.1-tooling-update`    | Jest, RTL, and documentation for project tooling.                 |
-| `v0.1.0-setup`             | Initial setup with Webpack, TypeScript, and Husky.                |
+| Tag                      | Summary                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `v0.5.0-cache`           | SWR data layer with persistent localStorage cache and 24h expiration.                                  |
+| `v0.4.2-feed-resilience` | Feed summary fallbacks, direct RSS retry logic, navigation refinements, and centralized error logging. |
+| `v0.4.1-network`         | HTTP client fallback improvements, loading state hook coverage, and consolidated styles entry.         |
+| `v0.4.0-podcast-detail`  | Podcast detail and episode views, episode mapper refactor, and feature tests.                          |
+| `v0.3.1-loading-spinner` | Global loading provider with header spinner and supporting tests.                                      |
+| `v0.3.0-main-view`       | Podcasts main catalogue flow with routing and testing.                                                 |
+| `v0.2.1-routing`         | Client-side routing shell with placeholder pages.                                                      |
+| `v0.2.0-architecture`    | Feature-based hexagonal scaffold with documented proposal.                                             |
+| `v0.1.1-tooling-update`  | Jest, RTL, and documentation for project tooling.                                                      |
+| `v0.1.0-setup`           | Initial setup with Webpack, TypeScript, and Husky.                                                     |
 
 ## 🏗️ Technical Stack
 
@@ -97,8 +98,17 @@ The output bundle will be generated in the `dist/` directory.
 - **Webpack 5** - Module bundler and dev server
 - **ESLint 9** - Linting (TypeScript + React + Prettier)
 - **Prettier** - Code formatting
+- **SWR 2** - Declarative data fetching with revalidation control
 - **Jest + React Testing Library** - Unit testing framework with ts-jest and jsdom
 - **CSS (native)** - Styling (no frameworks)
+
+## 🔄 Data Fetching & Cache Strategy
+
+- **SWR hooks:** `useTopPodcasts` and `usePodcastDetail` consume application use cases through SWR, exposing loading states while benefiting from request deduplication.
+- **Cache adapters:** `PodcastCache` serialises podcasts and episode details via the shared `LocalStorageCache`, storing timestamps and TTL metadata.
+- **24-hour expiry:** Cached entries persist between sessions but are invalidated automatically once the 24-hour window elapses, triggering a fresh SWR revalidation.
+- **Persistent provider:** `SWRProvider` initialises a shared cache map, syncs it with `localStorage` on unload, and disables focus/reconnect revalidations to honour the custom TTL policy.
+- **Hexagonal compliance:** Domain entities remain pure TypeScript models; infrastructure adapters encapsulate persistence and fetching details, and presentation hooks only orchestrate use cases.
 
 ## 🏗️ Project Folder Scaffold
 
