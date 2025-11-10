@@ -1,7 +1,8 @@
+import PodcastFilter from '@podcasts/presentation/components/PodcastFilter';
 import PodcastList from '@podcasts/presentation/components/PodcastList';
-import { useTopPodcasts } from '@podcasts/presentation/hooks/useTopPodcasts';
+import { useFilteredPodcasts } from '@podcasts/presentation/hooks/useFilteredPodcasts';
 import StatusMessage from '@shared/presentation/components/StatusMessage';
-import React from 'react';
+import React, { useState } from 'react';
 
 import './PodcastsPage.css';
 
@@ -11,10 +12,16 @@ import './PodcastsPage.css';
  * @returns Section showing a loading placeholder or the podcast grid.
  */
 export const PodcastsPage: React.FC = () => {
-  const { podcasts, isLoading } = useTopPodcasts();
+  const [searchTerm, setSearchTerm] = useState('');
+  const { podcasts, filteredCount, isLoading } = useFilteredPodcasts(searchTerm);
 
   return (
     <section className="podcasts-page">
+      <PodcastFilter
+        searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
+        filteredCount={filteredCount}
+      />
       {isLoading ? (
         <StatusMessage message="Loading podcasts…" dataTestId="podcast-loading" />
       ) : (
