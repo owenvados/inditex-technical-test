@@ -1,9 +1,12 @@
 import { GetTopPodcasts } from '@podcasts/application/use-cases/GetTopPodcasts';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import { PODCAST_CACHE_TTL_MS } from '@podcasts/infrastructure/cache/cacheConstants';
+import { podcastCache } from '@podcasts/infrastructure/cache/PodcastCache';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
 import { logError } from '@shared/utils/errors/errorLogger';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import useSWR from 'swr';
 
 const repository = new ITunesPodcastRepository();
 const getTopPodcasts = new GetTopPodcasts(repository);
@@ -13,50 +16,46 @@ interface UseTopPodcastsState {
   isLoading: boolean;
 }
 
-const INITIAL_STATE: UseTopPodcastsState = {
-  podcasts: [],
-  isLoading: false,
-};
-
 /**
  * Provides the top podcasts catalogue along with a loading indicator.
  *
  * @returns Current list of podcasts and loading flag.
  */
 export const useTopPodcasts = (): UseTopPodcastsState => {
-  const [state, setState] = useState<UseTopPodcastsState>(INITIAL_STATE);
   const { startLoading, stopLoading } = useLoadingState();
+  const cachedPodcasts = useMemo(() => podcastCache.getTopPodcasts(), []);
+
+  const shouldRevalidate = !cachedPodcasts;
+
+  const { data, isValidating, isLoading } = useSWR(
+    'top-podcasts',
+    async () => {
+      const podcasts = await getTopPodcasts.execute();
+      podcastCache.setTopPodcasts(podcasts);
+      return podcasts;
+    },
+    {
+      fallbackData: cachedPodcasts ?? undefined,
+      revalidateOnMount: shouldRevalidate,
+      revalidateIfStale: shouldRevalidate,
+      revalidateOnFocus: false,
+      dedupingInterval: PODCAST_CACHE_TTL_MS,
+      onError: (error) => {
+        logError('useTopPodcasts', error);
+      },
+    },
+  );
 
   useEffect(() => {
-    let cancelled = false;
-
-    const loadPodcasts = async () => {
-      setState((prev) => ({ ...prev, isLoading: true }));
+    if (isValidating) {
       startLoading();
+    } else {
+      stopLoading();
+    }
+  }, [isValidating, startLoading, stopLoading]);
 
-      try {
-        const podcasts = await getTopPodcasts.execute();
-
-        if (!cancelled) {
-          setState({ podcasts, isLoading: false });
-        }
-      } catch (error) {
-        logError('useTopPodcasts', error);
-
-        if (!cancelled) {
-          setState({ podcasts: [], isLoading: false });
-        }
-      } finally {
-        stopLoading();
-      }
-    };
-
-    loadPodcasts();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [startLoading, stopLoading]);
-
-  return state;
+  return {
+    podcasts: data ?? [],
+    isLoading: Boolean(isLoading || isValidating),
+  };
 };

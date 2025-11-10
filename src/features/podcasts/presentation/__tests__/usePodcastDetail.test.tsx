@@ -4,9 +4,12 @@ import { usePodcastDetail } from '@podcasts/presentation/hooks/usePodcastDetail'
 import { LoadingStateProvider } from '@shared/hooks/useLoadingState';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { SWRConfig } from 'swr';
 
 const wrapper = ({ children }: { children: React.ReactNode }): React.ReactElement => (
-  <LoadingStateProvider>{children}</LoadingStateProvider>
+  <SWRConfig value={{ provider: () => new Map() }}>
+    <LoadingStateProvider>{children}</LoadingStateProvider>
+  </SWRConfig>
 );
 
 describe('usePodcastDetail', () => {
@@ -14,6 +17,7 @@ describe('usePodcastDetail', () => {
 
   beforeEach(() => {
     getPodcastDetailSpy.mockReset();
+    window.localStorage.clear();
   });
 
   afterAll(() => {

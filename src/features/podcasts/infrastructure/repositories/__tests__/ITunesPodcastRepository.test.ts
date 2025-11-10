@@ -1,5 +1,5 @@
-import { DEFAULT_PODCAST_SUMMARY } from '@podcasts/infrastructure/mappers/mapperConstants';
 import { FeedContentClient } from '@podcasts/infrastructure/api/FeedContentClient';
+import { DEFAULT_PODCAST_SUMMARY } from '@podcasts/infrastructure/mappers/mapperConstants';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 
 jest.mock('@podcasts/infrastructure/api/ITunesPodcastClient', () => ({
