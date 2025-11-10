@@ -14,6 +14,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 - _No entries._
 
+## [v0.6.0-e2e] - 2025-11-10
+
+### Added
+
+- Cypress configuration (`cypress.config.ts`) and the `app-flow` end-to-end suite covering catalogue navigation, direct episode access, header navigation, feed fallbacks, empty filters, and cached startup.
+- Unit tests for `GetTopPodcasts`, `GetPodcastDetail`, and refreshed comments across presentation util tests for clarity.
+
+### Changed
+
+- `FeedContentClient` now injects missing RSS namespaces, prefers proxied fetches first, and locates namespaced HTML safely before sanitising.
+- `htmlSanitizer` normalises CDATA/HTML artefacts with richer whitespace handling, and `PodcastFilter` synchronises its controlled input state.
+- Documentation updates describing the new e2e command and release tag, plus `.gitignore` exclusions for Cypress artefacts and expanded Prettier defaults.
+
 ## [v0.5.0-cache] - 2025-11-10
 
 ### Added

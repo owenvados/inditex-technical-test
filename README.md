@@ -80,7 +80,7 @@ The output bundle will be generated in the `dist/` directory.
 ## 🏷️ Release Tags
 
 | Tag                      | Summary                                                                                                |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `v0.6.0-e2e`             | Cypress e2e suite, resilient RSS parsing, and expanded unit coverage for podcast filtering/use cases.   |
 | `v0.5.0-cache`           | SWR data layer with persistent localStorage cache and 24h expiration.                                  |
 | `v0.4.2-feed-resilience` | Feed summary fallbacks, direct RSS retry logic, navigation refinements, and centralized error logging. |
 | `v0.4.1-network`         | HTTP client fallback improvements, loading state hook coverage, and consolidated styles entry.         |
