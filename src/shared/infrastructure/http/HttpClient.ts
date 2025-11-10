@@ -7,6 +7,10 @@ export interface HttpClientConfig {
   corsProxy?: string;
 }
 
+export interface HttpRequestOptions {
+  timeoutMs?: number;
+}
+
 export class HttpClient {
   private readonly corsProxy?: string;
 
@@ -20,9 +24,9 @@ export class HttpClient {
   /**
    * Executes a fetch request with timeout protection and returns the parsed JSON payload.
    */
-  private async fetchJson<T>(url: string): Promise<T> {
+  private async fetchJson<T>(url: string, timeoutMs = APP_ENV.HTTP_TIMEOUT_MS): Promise<T> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), APP_ENV.HTTP_TIMEOUT_MS);
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const response = await fetch(url, { method: 'GET', signal: controller.signal });
@@ -37,26 +41,63 @@ export class HttpClient {
     }
   }
 
-  /**
-   * Retrieves the payload using the configured CORS proxy.
-   */
-  private async fetchJsonViaProxy<T>(url: string): Promise<T> {
+  private async fetchText(url: string, timeoutMs = APP_ENV.HTTP_TIMEOUT_MS): Promise<string> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, { method: 'GET', signal: controller.signal });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.text();
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  private buildProxyUrl(url: string): string {
     if (!this.corsProxy) {
       throw new Error('CORS proxy not configured');
     }
 
-    const proxyUrl = `${this.corsProxy}${encodeURIComponent(url)}`;
-    const payload = await this.fetchJson<{ contents?: string } | string>(proxyUrl);
+    return `${this.corsProxy}${encodeURIComponent(url)}`;
+  }
+
+  /**
+   * Retrieves the payload using the configured CORS proxy.
+   */
+  private async fetchJsonViaProxy<T>(url: string, timeoutMs = APP_ENV.HTTP_TIMEOUT_MS): Promise<T> {
+    const proxyUrl = this.buildProxyUrl(url);
+    const payload = await this.fetchJson<{ contents?: string } | string>(proxyUrl, timeoutMs);
 
     if (typeof payload === 'string') {
-      return JSON.parse(payload) as T;
+      try {
+        return JSON.parse(payload) as T;
+      } catch {
+        throw new Error('Invalid proxy response format');
+      }
     }
 
     if (payload && typeof payload.contents === 'string') {
-      return JSON.parse(payload.contents) as T;
+      try {
+        return JSON.parse(payload.contents) as T;
+      } catch {
+        throw new Error('Invalid proxy response format');
+      }
     }
 
     throw new Error('Invalid proxy response format');
+  }
+
+  private async fetchTextViaProxy(
+    url: string,
+    timeoutMs = APP_ENV.HTTP_TIMEOUT_MS,
+  ): Promise<string> {
+    const proxyUrl = this.buildProxyUrl(url);
+    return this.fetchText(proxyUrl, timeoutMs);
   }
 
   /**
@@ -64,15 +105,16 @@ export class HttpClient {
    *
    * @param url Target endpoint URL.
    * @param useCorsProxy Enable/disable proxy usage for the request.
+   * @param options Optional request options.
    * @returns Promise resolving to the parsed payload.
    */
-  async get<T>(url: string, useCorsProxy = false): Promise<T> {
+  async get<T>(url: string, useCorsProxy = false, options: HttpRequestOptions = {}): Promise<T> {
     if (useCorsProxy) {
-      return this.fetchJsonViaProxy<T>(url);
+      return this.fetchJsonViaProxy<T>(url, options.timeoutMs);
     }
 
     try {
-      return await this.fetchJson<T>(url);
+      return await this.fetchJson<T>(url, options.timeoutMs);
     } catch (error) {
       const isAbortError = error instanceof DOMException && error.name === 'AbortError';
       const isNetworkError = error instanceof TypeError || isAbortError;
@@ -82,7 +124,31 @@ export class HttpClient {
       }
 
       console.warn('[HttpClient] Direct request failed, retrying via proxy', error);
-      return this.fetchJsonViaProxy<T>(url);
+      return this.fetchJsonViaProxy<T>(url, options.timeoutMs);
+    }
+  }
+
+  async getText(
+    url: string,
+    useCorsProxy = false,
+    options: HttpRequestOptions = {},
+  ): Promise<string> {
+    if (useCorsProxy) {
+      return this.fetchTextViaProxy(url, options.timeoutMs);
+    }
+
+    try {
+      return await this.fetchText(url, options.timeoutMs);
+    } catch (error) {
+      const isAbortError = error instanceof DOMException && error.name === 'AbortError';
+      const isNetworkError = error instanceof TypeError || isAbortError;
+
+      if (!isNetworkError || !this.corsProxy) {
+        throw error;
+      }
+
+      console.warn('[HttpClient] Direct text request failed, retrying via proxy', error);
+      return this.fetchTextViaProxy(url, options.timeoutMs);
     }
   }
 
