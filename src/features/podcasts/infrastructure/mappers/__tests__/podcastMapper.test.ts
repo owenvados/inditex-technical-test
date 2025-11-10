@@ -36,6 +36,7 @@ const createLookupResponse = (overrides: Record<string, unknown> = {}) => ({
       episodeUrl: 'https://cdn.example.com/episode.mp3',
       releaseDate: '2025-11-08T06:16:06Z',
       trackTimeMillis: 3600000,
+      episodeGuid: 'guid-200',
     },
   ],
 });
@@ -79,6 +80,7 @@ describe('podcastMapper', () => {
       id: '200',
       title: 'Episode title',
       audioUrl: 'https://cdn.example.com/episode.mp3',
+      guid: 'guid-200',
       durationMs: 3600000,
     });
   });

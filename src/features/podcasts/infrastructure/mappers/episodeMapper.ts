@@ -31,6 +31,9 @@ const resolveAudioUrl = (episode: PodcastEpisodeRecord): string =>
 const resolveEpisodeId = (episode: PodcastEpisodeRecord): string =>
   String(episode.trackId ?? episode.episodeGuid ?? DEFAULT_EPISODE_ID);
 
+const resolveEpisodeGuid = (episode: PodcastEpisodeRecord): string | undefined =>
+  episode.episodeGuid ?? (episode.trackId ? String(episode.trackId) : undefined);
+
 /**
  * Converts a lookup API episode record into the domain {@link Episode} entity.
  */
@@ -38,6 +41,7 @@ export const mapEpisodeFromLookup = (episode: PodcastEpisodeRecord): Episode => 
   id: resolveEpisodeId(episode),
   title: episode.trackName ?? DEFAULT_EPISODE_TITLE,
   description: resolveDescription(episode),
+  guid: resolveEpisodeGuid(episode),
   audioUrl: resolveAudioUrl(episode),
   publishedAt: parseDate(episode.releaseDate),
   durationMs: episode.trackTimeMillis ?? 0,

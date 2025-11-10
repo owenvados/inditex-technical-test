@@ -26,6 +26,7 @@ describe('episodeMapper', () => {
       id: '123',
       title: 'Sample track',
       description: 'Long description',
+      guid: 'guid',
       audioUrl: 'https://cdn.example.com/audio.mp3',
       durationMs: 3600000,
       publishedAt: expect.any(Date),
@@ -35,7 +36,10 @@ describe('episodeMapper', () => {
   it('falls back to episodeGuid when trackId is missing', () => {
     const record = createEpisodeRecord({ trackId: undefined, episodeGuid: 'episode-guid' });
 
-    expect(mapEpisodeFromLookup(record).id).toBe('episode-guid');
+    const result = mapEpisodeFromLookup(record);
+
+    expect(result.id).toBe('episode-guid');
+    expect(result.guid).toBe('episode-guid');
   });
 
   it('falls back to default values when metadata is missing', () => {
@@ -56,6 +60,7 @@ describe('episodeMapper', () => {
     expect(result.id).toBe('missing-episode-id');
     expect(result.title).toBe('Untitled episode');
     expect(result.description).toBe('Description not available.');
+    expect(result.guid).toBeUndefined();
     expect(result.audioUrl).toBe('');
     expect(result.publishedAt).toBeInstanceOf(Date);
     expect(result.durationMs).toBe(0);
