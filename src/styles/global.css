@@ -3,6 +3,19 @@
   --color-text: #111827;
   --color-muted: #6b7280;
   --color-border: #e5e7eb;
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8f9fa;
+  --color-heading: #0f172a;
+  --color-heading-subtle: #334155;
+  --color-text-strong: #1f2937;
+  --color-text-soft: #475569;
+  --color-text-subtle: #4b5563;
+  --color-outline: #2563eb;
+  --background-white: var(--color-surface);
+  --border-color: var(--color-border);
+  --text-color: var(--color-text);
+  --text-secondary: var(--color-muted);
   --font-family-base:
     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
@@ -11,6 +24,12 @@ body {
   font-family: var(--font-family-base);
   background-color: #f9fafb;
   color: var(--color-text);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .app-container {
