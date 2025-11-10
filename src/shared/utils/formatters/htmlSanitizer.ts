@@ -7,16 +7,42 @@
 const cleanupRssWrappers = (value: string): string =>
   value
     .replace(/<!\[CDATA\[\s*/gi, '')
+    .replace(/&lt;!\[CDATA\[\s*/gi, '')
     .replace(/\s*\]\]>/gi, '')
+    .replace(/\s*\]\]&gt;/gi, '')
     .trim();
+
+const normaliseWhitespace = (value: string): string =>
+  value
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+\n/g, '\n')
+    .trim();
+
+const collectTextContent = (document: Document): string => {
+  const bodyText = document.body?.textContent?.trim();
+  if (bodyText && bodyText.length > 0) {
+    return normaliseWhitespace(bodyText);
+  }
+
+  const headText = document.head?.textContent?.trim();
+  if (headText && headText.length > 0) {
+    return normaliseWhitespace(headText);
+  }
+
+  const documentText = document.documentElement?.textContent?.trim() ?? '';
+  return normaliseWhitespace(documentText);
+};
+
+const stripTags = (value: string): string =>
+  normaliseWhitespace(value.replace(/<\/?[^>]+(>|$)/g, ' '));
 
 export const sanitizeHtml = (value: string): string => {
   const parser = new DOMParser();
-  const document = parser.parseFromString(cleanupRssWrappers(value), 'text/html');
+  const parsedDocument = parser.parseFromString(cleanupRssWrappers(value), 'text/html');
 
-  document.body.querySelectorAll('script, style, iframe').forEach((node) => node.remove());
+  parsedDocument.querySelectorAll('script, style, iframe').forEach((node) => node.remove());
 
-  const sanitisedHtml = document.body.innerHTML.trim();
+  const sanitisedHtml = parsedDocument.body.innerHTML.trim();
   if (sanitisedHtml.length > 0) {
     return sanitisedHtml;
   }
@@ -32,7 +58,12 @@ export const sanitizeHtml = (value: string): string => {
  */
 export const extractText = (value: string): string => {
   const parser = new DOMParser();
-  const document = parser.parseFromString(cleanupRssWrappers(value), 'text/html');
-  const text = document.body.textContent?.trim() ?? '';
-  return text.length > 0 ? text : value.trim();
+  const parsedDocument = parser.parseFromString(cleanupRssWrappers(value), 'text/html');
+  const textContent = collectTextContent(parsedDocument);
+
+  if (textContent.length > 0) {
+    return textContent;
+  }
+
+  return stripTags(value);
 };

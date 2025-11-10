@@ -5,6 +5,24 @@ import { extractText, sanitizeHtml } from '@shared/utils/formatters/htmlSanitize
 const CHANNEL_DESCRIPTION_TAGS = ['description', 'itunes:summary', 'summary'];
 const ITEM_DESCRIPTION_TAGS = ['content\\:encoded', 'description', 'itunes\\:summary'];
 const DEFAULT_TIMEOUT_MS = 20_000;
+const NAMESPACE_FALLBACKS: Record<string, string> = {
+  content: 'http://purl.org/rss/1.0/modules/content/',
+  itunes: 'http://www.itunes.com/dtds/podcast-1.0.dtd',
+};
+
+const ensureNamespaceDeclarations = (xml: string): string => {
+  return Object.entries(NAMESPACE_FALLBACKS).reduce((markup, [prefix, uri]) => {
+    if (!new RegExp(`<${prefix}:`, 'i').test(markup)) {
+      return markup;
+    }
+
+    if (new RegExp(`xmlns:${prefix}=`, 'i').test(markup)) {
+      return markup;
+    }
+
+    return markup.replace(/<rss([^>]*)>/i, `<rss$1 xmlns:${prefix}="${uri}">`);
+  }, xml);
+};
 
 export type FeedItemDescriptionMap = Map<string, string>;
 
@@ -52,7 +70,7 @@ export class FeedContentClient {
 
     try {
       const document = await this.loadDocument(feedUrl);
-      const items = Array.from(document.querySelectorAll('item'));
+      const items = Array.from(document.getElementsByTagName('item'));
 
       items.forEach((item) => {
         const guid = item.querySelector('guid')?.textContent?.trim();
@@ -89,18 +107,18 @@ export class FeedContentClient {
     let feedContents: string;
 
     try {
-      feedContents = await this.client.getText(feedUrl, false, {
+      feedContents = await this.client.getText(feedUrl, true, {
         timeoutMs: DEFAULT_TIMEOUT_MS,
       });
     } catch (error) {
-      console.warn('[FeedContentClient] Direct feed request failed, retrying via proxy', error);
-      feedContents = await this.client.getText(feedUrl, true, {
+      console.warn('[FeedContentClient] Proxy feed request failed, retrying without proxy', error);
+      feedContents = await this.client.getText(feedUrl, false, {
         timeoutMs: DEFAULT_TIMEOUT_MS,
       });
     }
 
     const parser = new DOMParser();
-    const document = parser.parseFromString(feedContents, 'text/xml');
+    const document = parser.parseFromString(ensureNamespaceDeclarations(feedContents), 'text/xml');
     this.documentCache.set(feedUrl, document);
     return document;
   }
@@ -119,13 +137,58 @@ export class FeedContentClient {
     returnHtml: boolean,
   ): string | undefined {
     for (const selector of selectors) {
-      const element = node.querySelector(selector);
-      const content = returnHtml ? element?.innerHTML : element?.textContent;
+      const element =
+        node.querySelector(selector) ??
+        this.findElementByNodeName(node, selector.replace(/\\:/g, ':'));
+      const content = this.resolveContent(element, returnHtml);
       if (content && content.trim().length > 0) {
         return content.trim();
       }
     }
 
     return undefined;
+  }
+
+  private findElementByNodeName(node: ParentNode, nodeName: string): Element | null {
+    if (!nodeName) {
+      return null;
+    }
+
+    const normalisedName = nodeName.toLowerCase();
+    const childNodes = (node as ParentNode).childNodes;
+
+    for (let index = 0; index < childNodes.length; index += 1) {
+      const child = childNodes[index];
+
+      if (child.nodeType !== Node.ELEMENT_NODE) {
+        continue;
+      }
+
+      const element = child as Element;
+      const elementName = (element.tagName ?? element.nodeName).toLowerCase();
+
+      if (elementName === normalisedName) {
+        return element;
+      }
+
+      const nestedMatch = this.findElementByNodeName(element, nodeName);
+      if (nestedMatch) {
+        return nestedMatch;
+      }
+    }
+
+    return null;
+  }
+
+  private resolveContent(element: Element | null, returnHtml: boolean): string | undefined {
+    if (!element) {
+      return undefined;
+    }
+
+    if (returnHtml) {
+      return element.textContent ?? undefined;
+    }
+
+    return element.textContent ?? undefined;
   }
 }

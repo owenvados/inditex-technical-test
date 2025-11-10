@@ -4,5 +4,13 @@
   "printWidth": 100,
   "semi": true,
   "tabWidth": 2,
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "jsxSingleQuote": false,
+  "proseWrap": "preserve",
+  "htmlWhitespaceSensitivity": "ignore",
+  "quoteProps": "as-needed",
+  "useTabs": false
 }

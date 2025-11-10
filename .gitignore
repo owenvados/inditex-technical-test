@@ -69,6 +69,10 @@ lerna-debug.log*
 .yarn/install-state.gz
 .pnp.*
 
+# Cypress
+cypress/screenshots/
+cypress/videos/
+
 # Storybook
 storybook-static/
 

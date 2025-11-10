@@ -1,4 +1,5 @@
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
+
 import { FilterPodcasts } from '../FilterPodcasts';
 
 const SAMPLE_PODCASTS: Podcast[] = [
@@ -34,5 +35,3 @@ describe('FilterPodcasts use case', () => {
     expect(result[0]).toEqual(SAMPLE_PODCASTS[1]);
   });
 });
-
-

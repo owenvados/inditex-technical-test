@@ -13,7 +13,8 @@
     "prepare": "husky install",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
-    "test:coverage": "jest --coverage --passWithNoTests"
+    "test:coverage": "jest --coverage --passWithNoTests",
+    "test:e2e": "cypress run"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",
     "css-loader": "^7.1.2",
+    "cypress": "^15.6.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",

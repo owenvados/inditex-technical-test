@@ -8,11 +8,10 @@ jest.mock('../hooks/useTopPodcasts', () => ({
 }));
 
 jest.mock('@shared/hooks/useDebounce', () => ({
-  useDebounce: <T,>(value: T) => value,
+  useDebounce: <T>(value: T) => value,
 }));
 
-const mockUseTopPodcasts = jest.requireMock('../hooks/useTopPodcasts')
-  .useTopPodcasts as jest.Mock;
+const mockUseTopPodcasts = jest.requireMock('../hooks/useTopPodcasts').useTopPodcasts as jest.Mock;
 
 describe('useFilteredPodcasts', () => {
   beforeEach(() => {
@@ -42,5 +41,3 @@ describe('useFilteredPodcasts', () => {
     expect(result.current.podcasts[0].title).toContain('KEXP');
   });
 });
-
-

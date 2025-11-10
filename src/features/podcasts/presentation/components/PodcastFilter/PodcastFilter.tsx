@@ -19,6 +19,21 @@ export const PodcastFilter: React.FC<PodcastFilterProps> = ({
   onSearchTermChange,
   filteredCount,
 }) => {
+  const [inputValue, setInputValue] = React.useState(searchTerm);
+
+  React.useEffect(() => {
+    setInputValue(searchTerm);
+  }, [searchTerm]);
+
+  const handleInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const nextValue = event.currentTarget.value;
+      setInputValue(nextValue);
+      onSearchTermChange(nextValue);
+    },
+    [onSearchTermChange],
+  );
+
   return (
     <div className="podcast-filter">
       <span className="podcast-filter__badge" data-testid="podcast-count">
@@ -28,8 +43,8 @@ export const PodcastFilter: React.FC<PodcastFilterProps> = ({
         type="text"
         className="podcast-filter__input"
         placeholder="Filter podcasts..."
-        value={searchTerm}
-        onChange={(event) => onSearchTermChange(event.target.value)}
+        value={inputValue}
+        onChange={handleInputChange}
         aria-label="Filter podcasts"
       />
     </div>
@@ -39,5 +54,3 @@ export const PodcastFilter: React.FC<PodcastFilterProps> = ({
 PodcastFilter.displayName = 'PodcastFilter';
 
 export default PodcastFilter;
-
-

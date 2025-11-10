@@ -10,6 +10,7 @@ const createHttpClientMock = (): jest.Mocked<HttpClient> =>
   }) as unknown as jest.Mocked<HttpClient>;
 
 describe('FeedContentClient', () => {
+  // Reads the first available description tag for the channel summary.
   it('returns channel summary from the first available tag', async () => {
     const httpClientMock = createHttpClientMock();
     httpClientMock.getText.mockResolvedValue(`
@@ -25,6 +26,7 @@ describe('FeedContentClient', () => {
     expect(httpClientMock.getText).toHaveBeenCalledWith(FEED_URL, true, { timeoutMs: 20000 });
   });
 
+  // Collects cleaned HTML per guid when items contain rich descriptions.
   it('extracts sanitized HTML descriptions keyed by guid', async () => {
     const httpClientMock = createHttpClientMock();
     httpClientMock.getText.mockResolvedValue(`
@@ -50,6 +52,7 @@ describe('FeedContentClient', () => {
     expect(httpClientMock.getText).toHaveBeenCalledWith(FEED_URL, true, { timeoutMs: 20000 });
   });
 
+  // Uses the internal cache so the feed is only fetched once.
   it('reuses cached documents between channel and item lookups', async () => {
     const httpClientMock = createHttpClientMock();
     httpClientMock.getText.mockResolvedValue(`
@@ -71,6 +74,7 @@ describe('FeedContentClient', () => {
     expect(httpClientMock.getText).toHaveBeenCalledTimes(1);
   });
 
+  // Handles missing URLs by returning an empty collection.
   it('returns empty map when feed URL is missing', async () => {
     const httpClientMock = createHttpClientMock();
     const client = new FeedContentClient(httpClientMock);

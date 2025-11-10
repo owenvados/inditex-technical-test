@@ -70,6 +70,7 @@ The output bundle will be generated in the `dist/` directory.
 | `npm run test`          | Run Jest test suite                         |
 | `npm run test:watch`    | Run Jest in watch mode                      |
 | `npm run test:coverage` | Run Jest with coverage reports              |
+| `npm run test:e2e`      | Run Cypress end-to-end tests headlessly     |
 
 ## 📚 Documentation
 
@@ -100,6 +101,7 @@ The output bundle will be generated in the `dist/` directory.
 - **Prettier** - Code formatting
 - **SWR 2** - Declarative data fetching with revalidation control
 - **Jest + React Testing Library** - Unit testing framework with ts-jest and jsdom
+- **Cypress** - End-to-end testing (specs in `src/tests/__e2e__/`)
 - **CSS (native)** - Styling (no frameworks)
 
 ## 🔄 Data Fetching & Cache Strategy
