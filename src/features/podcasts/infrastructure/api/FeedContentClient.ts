@@ -1,9 +1,9 @@
 import type { HttpClient } from '@shared/infrastructure/http/HttpClient';
 import { httpClient } from '@shared/infrastructure/http/HttpClient';
+import { extractText, sanitizeHtml } from '@shared/utils/html/htmlSanitizer';
 
 const CHANNEL_DESCRIPTION_TAGS = ['description', 'itunes:summary', 'summary'];
 const ITEM_DESCRIPTION_TAGS = ['content\\:encoded', 'description', 'itunes\\:summary'];
-const REMOVED_TAG_SELECTORS = ['script', 'style', 'iframe'];
 const DEFAULT_TIMEOUT_MS = 20_000;
 
 export type FeedItemDescriptionMap = Map<string, string>;
@@ -30,7 +30,7 @@ export class FeedContentClient {
     try {
       const document = await this.loadDocument(feedUrl);
       const rawContent = this.findFirstContent(document, CHANNEL_DESCRIPTION_TAGS, false);
-      return rawContent ? this.toPlainText(rawContent) : undefined;
+      return rawContent ? extractText(rawContent) : undefined;
     } catch (error) {
       console.warn('[FeedContentClient] Unable to resolve channel summary', error);
       return undefined;
@@ -65,7 +65,7 @@ export class FeedContentClient {
           return;
         }
 
-        descriptions.set(guid, this.toSafeHtml(rawContent));
+        descriptions.set(guid, sanitizeHtml(rawContent));
       });
     } catch (error) {
       console.warn('[FeedContentClient] Unable to resolve item descriptions', error);
@@ -118,38 +118,5 @@ export class FeedContentClient {
     }
 
     return undefined;
-  }
-
-  /**
-   * Sanitises HTML by extracting the textual representation.
-   *
-   * @param value Source HTML/markup string.
-   * @returns Trimmed plain text value.
-   */
-  private toPlainText(value: string): string {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(value, 'text/html');
-    const text = doc.body.textContent?.trim() ?? '';
-    return text.length > 0 ? text : value.trim();
-  }
-
-  /**
-   * Sanitises HTML markup by stripping dangerous tags while preserving structure.
-   *
-   * @param value Source HTML/markup string.
-   * @returns Safe HTML string or the plain text fallback.
-   */
-  private toSafeHtml(value: string): string {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(value, 'text/html');
-
-    doc.body.querySelectorAll(REMOVED_TAG_SELECTORS.join(',')).forEach((node) => node.remove());
-
-    const sanitizedHtml = doc.body.innerHTML.trim();
-    if (sanitizedHtml.length > 0) {
-      return sanitizedHtml;
-    }
-
-    return this.toPlainText(value);
   }
 }
