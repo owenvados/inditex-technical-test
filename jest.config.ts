@@ -16,7 +16,7 @@ const config: Config = {
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
   },
   testMatch: ['**/__tests__/**/*.(ts|tsx)', '**/?(*.)+(test|spec).(ts|tsx)'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
