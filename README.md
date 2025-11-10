@@ -45,7 +45,7 @@ npm run prepare
 npm run dev
 ```
 
-The application will be available at `http://localhost:3000` with hot module replacement enabled.
+The application will be available at `http://localhost:5173` with hot module replacement enabled.
 
 ### Production Build
 
@@ -80,6 +80,8 @@ The output bundle will be generated in the `dist/` directory.
 
 | Tag                        | Summary                                                           |
 | -------------------------- | ----------------------------------------------------------------- |
+| `v0.4.1-network`            | HTTP client fallback improvements, loading state hook coverage, and consolidated styles entry. |
+| `v0.4.0-podcast-detail`     | Podcast detail and episode views, episode mapper refactor, and feature tests. |
 | `v0.3.1-loading-spinner`   | Global loading provider with header spinner and supporting tests. |
 | `v0.3.0-main-view`         | Podcasts main catalogue flow with routing and testing.            |
 | `v0.2.1-routing`           | Client-side routing shell with placeholder pages.                 |

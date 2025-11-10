@@ -14,6 +14,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 - _No entries._
 
+## [v0.4.1-network] - 2025-11-10
+
+### Added
+
+- Unit tests for the shared loading state hook including initial-loading scenarios.
+- Aggregated stylesheet entry point (`styles/index.css`) simplifying global imports.
+
+### Changed
+
+- HTTP client now retries via AllOrigins only when the direct request fails, with a unified timeout helper.
+- Development server port aligned with iTunes CORS headers (`5173`).
+
+## [v0.4.0-podcast-detail] - 2025-11-09
+
+### Added
+
+- Podcast detail and episode views with shared sidebar navigation and audio playback.
+- Episode mapper extracted with dedicated tests ensuring consistent IDs and metadata.
+
+### Changed
+
+- iTunes client/http client interactions refactored to support detail lookups and proxy fallback.
+
 ## [v0.3.0-main-view] - 2025-11-09
 
 ### Added
