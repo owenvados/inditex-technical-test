@@ -4,9 +4,15 @@
  * @param value HTML fragment to sanitise.
  * @returns Sanitised HTML string or plain text fallback.
  */
+const cleanupRssWrappers = (value: string): string =>
+  value
+    .replace(/<!\[CDATA\[\s*/gi, '')
+    .replace(/\s*\]\]>/gi, '')
+    .trim();
+
 export const sanitizeHtml = (value: string): string => {
   const parser = new DOMParser();
-  const document = parser.parseFromString(value, 'text/html');
+  const document = parser.parseFromString(cleanupRssWrappers(value), 'text/html');
 
   document.body.querySelectorAll('script, style, iframe').forEach((node) => node.remove());
 
@@ -26,7 +32,7 @@ export const sanitizeHtml = (value: string): string => {
  */
 export const extractText = (value: string): string => {
   const parser = new DOMParser();
-  const document = parser.parseFromString(value, 'text/html');
+  const document = parser.parseFromString(cleanupRssWrappers(value), 'text/html');
   const text = document.body.textContent?.trim() ?? '';
   return text.length > 0 ? text : value.trim();
 };

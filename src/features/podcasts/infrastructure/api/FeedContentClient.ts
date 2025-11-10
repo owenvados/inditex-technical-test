@@ -1,6 +1,6 @@
 import type { HttpClient } from '@shared/infrastructure/http/HttpClient';
 import { httpClient } from '@shared/infrastructure/http/HttpClient';
-import { extractText, sanitizeHtml } from '@shared/utils/html/htmlSanitizer';
+import { extractText, sanitizeHtml } from '@shared/utils/formatters/htmlSanitizer';
 
 const CHANNEL_DESCRIPTION_TAGS = ['description', 'itunes:summary', 'summary'];
 const ITEM_DESCRIPTION_TAGS = ['content\\:encoded', 'description', 'itunes\\:summary'];

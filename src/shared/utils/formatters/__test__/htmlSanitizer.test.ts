@@ -1,4 +1,4 @@
-import { extractText, sanitizeHtml } from '@shared/utils/html/htmlSanitizer';
+import { extractText, sanitizeHtml } from '@shared/utils/formatters/htmlSanitizer';
 
 describe('htmlSanitizer', () => {
   describe('sanitizeHtml', () => {
@@ -12,6 +12,12 @@ describe('htmlSanitizer', () => {
     it('falls back to plain text when markup is empty after sanitising', () => {
       expect(sanitizeHtml('<script>alert("x")</script>')).toBe('alert("x")');
     });
+
+    it('removes cdata wrappers and closing artefacts', () => {
+      const snippet = '<![CDATA[ <p>Line</p> ]]> ';
+
+      expect(sanitizeHtml(snippet)).toBe('<p>Line</p>');
+    });
   });
 
   describe('extractText', () => {
@@ -21,6 +27,10 @@ describe('htmlSanitizer', () => {
 
     it('returns trimmed original string when parsing fails', () => {
       expect(extractText('plain text')).toBe('plain text');
+    });
+
+    it('removes cdata remnants in plain text output', () => {
+      expect(extractText('<![CDATA[ Plain text ]]>')).toBe('Plain text');
     });
   });
 });
