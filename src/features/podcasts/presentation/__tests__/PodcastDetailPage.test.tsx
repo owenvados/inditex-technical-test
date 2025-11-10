@@ -16,7 +16,7 @@ const createState = (state: Partial<UsePodcastDetailState>): UsePodcastDetailSta
 });
 
 describe('PodcastDetailPage', () => {
-  const renderPage = (initialPath = '/podcast/79687345') => {
+  const renderPage = (initialPath = '/podcast/79687345') =>
     render(
       <MemoryRouter initialEntries={[initialPath]}>
         <Routes>
@@ -24,7 +24,6 @@ describe('PodcastDetailPage', () => {
         </Routes>
       </MemoryRouter>,
     );
-  };
 
   it('renders podcast detail when data is loaded', () => {
     mockedUsePodcastDetail.mockReturnValue(
@@ -40,20 +39,19 @@ describe('PodcastDetailPage', () => {
     expect(screen.getByText(MOCK_PODCAST_DETAIL.podcast.title)).toBeInTheDocument();
   });
 
-  it('renders loading state', () => {
+  it('renders nothing while loading', () => {
     mockedUsePodcastDetail.mockReturnValue(createState({ isLoading: true }));
 
-    renderPage();
+    const { container } = renderPage();
 
-    expect(screen.getByTestId('podcast-detail-loading')).toBeInTheDocument();
+    expect(container.firstChild).toBeNull();
   });
 
-  it('renders empty state when detail is not available', () => {
-    mockedUsePodcastDetail.mockReturnValue(createState({}));
+  it('renders nothing when detail is missing', () => {
+    mockedUsePodcastDetail.mockReturnValue(createState({ podcastDetail: null }));
 
-    renderPage();
+    const { container } = renderPage();
 
-    expect(screen.getByTestId('podcast-detail-empty')).toBeInTheDocument();
-    expect(screen.getByText('Podcast not found.')).toBeInTheDocument();
+    expect(container.firstChild).toBeNull();
   });
 });

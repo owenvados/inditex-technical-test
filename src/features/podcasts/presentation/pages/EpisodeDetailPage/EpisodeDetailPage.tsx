@@ -2,7 +2,7 @@ import { PodcastSidebar } from '@podcasts/presentation/components/PodcastSidebar
 import { usePodcastDetail } from '@podcasts/presentation/hooks/usePodcastDetail';
 import { AudioPlayer } from '@shared/presentation/components/AudioPlayer';
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import './EpisodeDetailPage.css';
 
@@ -15,40 +15,14 @@ export const EpisodeDetailPage: React.FC = () => {
   const { podcastId, episodeId } = useParams();
   const { podcastDetail, isLoading } = usePodcastDetail(podcastId);
 
-  if (isLoading) {
-    return (
-      <section
-        className="episode-detail-page episode-detail-page--loading"
-        data-testid="episode-detail-loading"
-      >
-        <p>Loading episode…</p>
-      </section>
-    );
-  }
-
-  if (!podcastDetail) {
-    return (
-      <section
-        className="episode-detail-page episode-detail-page--empty"
-        data-testid="episode-detail-empty"
-      >
-        <p>Podcast not found.</p>
-      </section>
-    );
+  if (isLoading || !podcastDetail) {
+    return null;
   }
 
   const episode = podcastDetail.episodes.find((item) => item.id === episodeId);
 
   if (!episode) {
-    return (
-      <section
-        className="episode-detail-page episode-detail-page--empty"
-        data-testid="episode-detail-missing"
-      >
-        <p>Episode not found.</p>
-        <Link to={`/podcast/${podcastDetail.podcast.id}`}>Back to podcast detail</Link>
-      </section>
-    );
+    return null;
   }
 
   return (

@@ -15,34 +15,15 @@ export const PodcastDetailPage: React.FC = () => {
   const { podcastId } = useParams();
   const { podcastDetail, isLoading } = usePodcastDetail(podcastId);
 
-  if (isLoading) {
-    return (
-      <section
-        className="podcast-detail-page podcast-detail-page--loading"
-        data-testid="podcast-detail-loading"
-      >
-        <p>Loading podcast detail…</p>
-      </section>
-    );
-  }
-
-  if (!podcastDetail) {
-    return (
-      <section
-        className="podcast-detail-page podcast-detail-page--empty"
-        data-testid="podcast-detail-empty"
-      >
-        <p>Podcast not found.</p>
-      </section>
-    );
+  if (isLoading || !podcastDetail) {
+    return null;
   }
 
   const { podcast, episodes } = podcastDetail;
 
   return (
     <section className="podcast-detail-page" data-testid="podcast-detail-page">
-      <PodcastSidebar podcast={podcast} />
-
+      <PodcastSidebar podcast={podcast} linkTo="/" />
       <main className="podcast-detail-page__main">
         <header className="podcast-detail-page__header">
           <h2>Episodes: {episodes.length}</h2>

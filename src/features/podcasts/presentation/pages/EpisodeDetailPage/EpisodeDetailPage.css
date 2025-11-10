@@ -41,14 +41,6 @@
   width: 100%;
 }
 
-.episode-detail-page--loading,
-.episode-detail-page--error,
-.episode-detail-page--empty {
-  padding: 2rem 0;
-  text-align: center;
-  color: #475569;
-}
-
 @media (max-width: 1024px) {
   .episode-detail-page {
     grid-template-columns: 1fr;

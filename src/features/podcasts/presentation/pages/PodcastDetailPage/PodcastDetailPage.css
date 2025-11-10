@@ -26,15 +26,6 @@
   color: #0f172a;
   margin: 0;
 }
-
-.podcast-detail-page--loading,
-.podcast-detail-page--error,
-.podcast-detail-page--empty {
-  padding: 2rem 0;
-  text-align: center;
-  color: #475569;
-}
-
 @media (max-width: 1024px) {
   .podcast-detail-page {
     grid-template-columns: 1fr;
