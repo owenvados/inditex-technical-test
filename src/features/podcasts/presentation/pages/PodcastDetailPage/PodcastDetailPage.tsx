@@ -1,3 +1,4 @@
+import { buildHomeRoute } from '@core/router/routes';
 import { EpisodeList } from '@podcasts/presentation/components/EpisodeList';
 import { PodcastSidebar } from '@podcasts/presentation/components/PodcastSidebar';
 import { usePodcastDetail } from '@podcasts/presentation/hooks/usePodcastDetail';
@@ -23,7 +24,7 @@ export const PodcastDetailPage: React.FC = () => {
 
   return (
     <section className="podcast-detail-page" data-testid="podcast-detail-page">
-      <PodcastSidebar podcast={podcast} linkTo="/" />
+      <PodcastSidebar podcast={podcast} linkTo={buildHomeRoute()} />
       <main className="podcast-detail-page__main">
         <header className="podcast-detail-page__header">
           <h2>Episodes: {episodes.length}</h2>

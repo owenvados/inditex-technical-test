@@ -1,3 +1,4 @@
+import { buildPodcastDetailRoute } from '@core/router/routes';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import { Sidebar } from '@shared/presentation/components/Sidebar';
 import React from 'react';
@@ -17,7 +18,7 @@ export interface PodcastSidebarProps {
  * @returns Sidebar element containing image, title, author and description.
  */
 export const PodcastSidebar: React.FC<PodcastSidebarProps> = ({ podcast, linkTo }) => {
-  const target = linkTo ?? `/podcast/${podcast.id}`;
+  const target = linkTo ?? buildPodcastDetailRoute(podcast.id);
 
   return (
     <Link to={target} className="podcast-sidebar__link" data-testid="podcast-sidebar-link">

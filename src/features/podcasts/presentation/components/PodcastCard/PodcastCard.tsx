@@ -1,3 +1,4 @@
+import { buildPodcastDetailRoute } from '@core/router/routes';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
@@ -17,7 +18,7 @@ export interface PodcastCardProps {
 export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
   return (
     <Link
-      to={`/podcast/${podcast.id}`}
+      to={buildPodcastDetailRoute(podcast.id)}
       className="podcast-card__link"
       data-testid="podcast-card-link"
     >
