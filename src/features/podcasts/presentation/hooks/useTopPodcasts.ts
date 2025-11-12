@@ -1,15 +1,10 @@
-import { GetTopPodcasts } from '@podcasts/application/use-cases/GetTopPodcasts';
+import { resolveDependency } from '@core/di/container';
+import { useUseCaseQuery } from '@core/hooks/useUseCaseQuery';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import { PODCAST_CACHE_TTL_MS } from '@podcasts/infrastructure/cache/cacheConstants';
 import { podcastCache } from '@podcasts/infrastructure/cache/PodcastCache';
-import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
-import { logError } from '@shared/utils/errors/errorLogger';
-import { useEffect, useMemo } from 'react';
-import useSWR from 'swr';
-
-const repository = new ITunesPodcastRepository();
-const getTopPodcasts = new GetTopPodcasts(repository);
+import { useEffect } from 'react';
 
 interface UseTopPodcastsState {
   podcasts: Podcast[];
@@ -23,28 +18,19 @@ interface UseTopPodcastsState {
  */
 export const useTopPodcasts = (): UseTopPodcastsState => {
   const { startLoading, stopLoading } = useLoadingState();
-  const cachedPodcasts = useMemo(() => podcastCache.getTopPodcasts(), []);
 
-  const shouldRevalidate = !cachedPodcasts;
+  const getTopPodcasts = resolveDependency('getTopPodcasts');
 
-  const { data, isValidating, isLoading } = useSWR(
-    'top-podcasts',
-    async () => {
-      const podcasts = await getTopPodcasts.execute();
-      podcastCache.setTopPodcasts(podcasts);
-      return podcasts;
+  const { data, isLoading, isValidating } = useUseCaseQuery<Podcast[]>({
+    key: 'top-podcasts',
+    execute: () => getTopPodcasts.execute(),
+    cache: {
+      read: () => podcastCache.getTopPodcasts(),
+      write: (podcasts) => podcastCache.setTopPodcasts(podcasts),
+      ttlMs: PODCAST_CACHE_TTL_MS,
     },
-    {
-      fallbackData: cachedPodcasts ?? undefined,
-      revalidateOnMount: shouldRevalidate,
-      revalidateIfStale: shouldRevalidate,
-      revalidateOnFocus: false,
-      dedupingInterval: PODCAST_CACHE_TTL_MS,
-      onError: (error) => {
-        logError('useTopPodcasts', error);
-      },
-    },
-  );
+    scope: 'useTopPodcasts',
+  });
 
   useEffect(() => {
     if (isValidating) {
@@ -56,6 +42,6 @@ export const useTopPodcasts = (): UseTopPodcastsState => {
 
   return {
     podcasts: data ?? [],
-    isLoading: Boolean(isLoading || isValidating),
+    isLoading,
   };
 };

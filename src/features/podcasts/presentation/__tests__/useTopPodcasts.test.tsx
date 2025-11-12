@@ -1,16 +1,11 @@
+import { renderHook, waitFor } from '@testing-library/react';
+import { resetDependencyContainer } from '@core/di/container';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 import { MOCK_PODCASTS } from '@podcasts/presentation/__mocks__/podcastMocks';
 import { useTopPodcasts } from '@podcasts/presentation/hooks/useTopPodcasts';
-import { LoadingStateProvider } from '@shared/hooks/useLoadingState';
-import { renderHook, waitFor } from '@testing-library/react';
-import React from 'react';
-import { SWRConfig } from 'swr';
+import { createHookWrapper } from '@tests/utils/testProviders';
 
-const wrapper = ({ children }: { children: React.ReactNode }): React.ReactElement => (
-  <SWRConfig value={{ provider: () => new Map() }}>
-    <LoadingStateProvider>{children}</LoadingStateProvider>
-  </SWRConfig>
-);
+const wrapper = createHookWrapper();
 
 describe('useTopPodcasts', () => {
   const getTopPodcastsSpy = jest.spyOn(ITunesPodcastRepository.prototype, 'getTopPodcasts');
@@ -18,6 +13,7 @@ describe('useTopPodcasts', () => {
   beforeEach(() => {
     getTopPodcastsSpy.mockReset();
     window.localStorage.clear();
+    resetDependencyContainer();
   });
 
   afterAll(() => {

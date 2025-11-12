@@ -25,6 +25,7 @@
       "@app/*": ["app/*"],
       "@core/*": ["core/*"],
       "@shared/*": ["shared/*"],
+      "@tests/*": ["tests/*"],
       "@features/*": ["features/*"],
       "@podcasts/*": ["features/podcasts/*"],
       "@styles/*": ["styles/*"],
@@ -32,5 +33,5 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.test.tsx", "src/tests/__e2e__"]
+  "exclude": ["node_modules", "dist", "src/tests/__e2e__"]
 }

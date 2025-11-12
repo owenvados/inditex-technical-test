@@ -1,15 +1,10 @@
-import { GetPodcastDetail } from '@podcasts/application/use-cases/GetPodcastDetail';
+import { resolveDependency } from '@core/di/container';
+import { useUseCaseQuery } from '@core/hooks/useUseCaseQuery';
 import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
 import { PODCAST_CACHE_TTL_MS } from '@podcasts/infrastructure/cache/cacheConstants';
 import { podcastCache } from '@podcasts/infrastructure/cache/PodcastCache';
-import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
-import { logError } from '@shared/utils/errors/errorLogger';
-import { useEffect, useMemo } from 'react';
-import useSWR from 'swr';
-
-const repository = new ITunesPodcastRepository();
-const getPodcastDetail = new GetPodcastDetail(repository);
+import { useEffect } from 'react';
 
 interface UsePodcastDetailState {
   podcastDetail: PodcastDetail | null;
@@ -24,36 +19,31 @@ interface UsePodcastDetailState {
  */
 export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetailState => {
   const { startLoading, stopLoading } = useLoadingState();
-  const cacheKey = useMemo(() => (podcastId ? `podcast-detail:${podcastId}` : null), [podcastId]);
+  const getPodcastDetail = resolveDependency('getPodcastDetail');
+  const enabled = Boolean(podcastId);
 
-  const cachedDetail = useMemo(
-    () => (podcastId ? podcastCache.getPodcastDetail(podcastId) : null),
-    [podcastId],
-  );
-
-  const shouldRevalidate = !cachedDetail;
-
-  const { data, isLoading, isValidating } = useSWR(
-    cacheKey,
-    async () => {
+  const { data, isLoading, isValidating } = useUseCaseQuery<PodcastDetail | null>({
+    key: enabled ? `podcast-detail:${podcastId}` : null,
+    execute: () => {
       if (!podcastId) {
-        return null;
+        return Promise.resolve(null);
       }
-      const detail = await getPodcastDetail.execute(podcastId);
-      podcastCache.setPodcastDetail(podcastId, detail);
-      return detail;
+      return getPodcastDetail.execute(podcastId);
     },
-    {
-      fallbackData: cachedDetail ?? undefined,
-      revalidateOnMount: shouldRevalidate,
-      revalidateIfStale: shouldRevalidate,
-      revalidateOnFocus: false,
-      dedupingInterval: PODCAST_CACHE_TTL_MS,
-      onError: (error) => {
-        logError('usePodcastDetail', error);
-      },
-    },
-  );
+    cache: enabled
+      ? {
+          read: () => podcastCache.getPodcastDetail(podcastId!),
+          write: (detail) => {
+            if (detail && podcastId) {
+              podcastCache.setPodcastDetail(podcastId!, detail);
+            }
+          },
+          ttlMs: PODCAST_CACHE_TTL_MS,
+        }
+      : undefined,
+    enabled,
+    scope: 'usePodcastDetail',
+  });
 
   useEffect(() => {
     if (!podcastId) {
@@ -70,6 +60,6 @@ export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetai
 
   return {
     podcastDetail: data ?? null,
-    isLoading: Boolean(podcastId) && Boolean(isLoading || isValidating),
+    isLoading: Boolean(podcastId) && isLoading,
   };
 };
