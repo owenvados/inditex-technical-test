@@ -3,7 +3,7 @@
 ## Reviewer Summary
 - React 19 + TypeScript SPA built from scratch with Webpack, native CSS, and ESLint 9.
 - Hexagonal architecture throughout (Domain → Application → Infrastructure → Presentation) with 24-hour localStorage cache and SWR orchestration.
-- Automated quality gates: Husky (lint + prettier), Commitlint, Jest/RTL unit suite, Cypress headless e2e flow.
+- Automated quality gates: Husky (lint + prettier), Commitlint, Jest unit suite, Cypress headless e2e flow.
 - RSS feed parsing hardened with namespace injection and proxy-first strategy; Cypress specs isolated from the TypeScript app build.
 
 ## How to Evaluate
@@ -70,7 +70,7 @@ graph TD
 - **Webpack dual modes:** `mode: development` (no minification, inline source maps) vs `mode: production` (minified bundles, splitChunks).
 
 ## Testing Strategy
-- **Unit & integration (Jest + React Testing Library):**
+- **Unit & integration (Jest-only):**
   - Application use cases (`GetTopPodcasts`, `GetPodcastDetail`, `FilterPodcasts`).
   - Infrastructure adapters (`FeedContentClient`, `ITunesPodcastRepository`, HTTP client, cache/mappers).
   - Presentation hooks and components (filter, pages, loading state).
@@ -105,6 +105,7 @@ graph TD
 
 | Tag                      | Summary                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `v0.7.0-testing`         | Refactor testing strategy: remove React Testing Library and use Jest-only tests.                      |
 | `v0.6.0-e2e`             | Cypress e2e suite, resilient RSS parsing, and expanded unit coverage for podcast filtering/use cases. |
 | `v0.5.0-cache`           | SWR data layer with persistent localStorage cache and 24h expiration.                                  |
 | `v0.4.2-feed-resilience` | Feed summary fallbacks, direct RSS retry logic, navigation refinements, and centralized error logging. |
