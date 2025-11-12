@@ -17,11 +17,27 @@ type CachedPodcastDetail = Omit<PodcastDetail, 'episodes'> & {
   episodes: CachedEpisode[];
 };
 
+const serialisePodcastDetail = (detail: PodcastDetail): CachedPodcastDetail => ({
+  ...detail,
+  episodes: detail.episodes.map((episode) => ({
+    ...episode,
+    publishedAt: episode.publishedAt.getTime(),
+  })),
+});
+
+const deserialisePodcastDetail = (cached: CachedPodcastDetail): PodcastDetail => ({
+  ...cached,
+  episodes: cached.episodes.map((episode) => ({
+    ...episode,
+    publishedAt: new Date(episode.publishedAt),
+  })),
+});
+
 /**
  * Provides cache helpers tailored for podcast data.
  */
 export class PodcastCache {
-  constructor(private readonly cache = new LocalStorageCache(PODCAST_CACHE_NAMESPACE)) {}
+  private readonly cache = new LocalStorageCache(PODCAST_CACHE_NAMESPACE);
 
   getTopPodcasts(): Podcast[] | null {
     return this.cache.get<Podcast[]>(TOP_PODCASTS_KEY);
@@ -33,30 +49,15 @@ export class PodcastCache {
 
   getPodcastDetail(podcastId: string): PodcastDetail | null {
     const cachedDetail = this.cache.get<CachedPodcastDetail>(this.buildPodcastDetailKey(podcastId));
-
-    if (!cachedDetail) {
-      return null;
-    }
-
-    return {
-      ...cachedDetail,
-      episodes: cachedDetail.episodes.map((episode) => ({
-        ...episode,
-        publishedAt: new Date(episode.publishedAt),
-      })),
-    };
+    return cachedDetail ? deserialisePodcastDetail(cachedDetail) : null;
   }
 
   setPodcastDetail(podcastId: string, detail: PodcastDetail): void {
-    const serializableDetail: CachedPodcastDetail = {
-      ...detail,
-      episodes: detail.episodes.map((episode) => ({
-        ...episode,
-        publishedAt: episode.publishedAt.getTime(),
-      })),
-    };
-
-    this.cache.set(this.buildPodcastDetailKey(podcastId), serializableDetail, PODCAST_CACHE_TTL_MS);
+    this.cache.set(
+      this.buildPodcastDetailKey(podcastId),
+      serialisePodcastDetail(detail),
+      PODCAST_CACHE_TTL_MS,
+    );
   }
 
   private buildPodcastDetailKey(podcastId: string): string {
