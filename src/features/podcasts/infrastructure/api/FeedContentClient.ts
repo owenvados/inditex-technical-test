@@ -4,7 +4,7 @@ import { extractText, sanitizeHtml } from '@shared/utils/formatters/htmlSanitize
 
 const CHANNEL_DESCRIPTION_TAGS = ['description', 'itunes:summary', 'summary'];
 const ITEM_DESCRIPTION_TAGS = ['content\\:encoded', 'description', 'itunes\\:summary'];
-const DEFAULT_TIMEOUT_MS = 20_000;
+const DEFAULT_TIMEOUT_MS = 20000;
 const NAMESPACE_FALLBACKS: Record<string, string> = {
   content: 'http://purl.org/rss/1.0/modules/content/',
   itunes: 'http://www.itunes.com/dtds/podcast-1.0.dtd',
@@ -137,9 +137,7 @@ export class FeedContentClient {
     returnHtml: boolean,
   ): string | undefined {
     for (const selector of selectors) {
-      const element =
-        node.querySelector(selector) ??
-        this.findElementByNodeName(node, selector.replace(/\\:/g, ':'));
+      const element = this.findElement(node, selector);
       const content = this.resolveContent(element, returnHtml);
       if (content && content.trim().length > 0) {
         return content.trim();
@@ -149,46 +147,80 @@ export class FeedContentClient {
     return undefined;
   }
 
-  private findElementByNodeName(node: ParentNode, nodeName: string): Element | null {
-    if (!nodeName) {
-      return null;
-    }
-
-    const normalisedName = nodeName.toLowerCase();
-    const childNodes = (node as ParentNode).childNodes;
-
-    for (let index = 0; index < childNodes.length; index += 1) {
-      const child = childNodes[index];
-
-      if (child.nodeType !== Node.ELEMENT_NODE) {
-        continue;
-      }
-
-      const element = child as Element;
-      const elementName = (element.tagName ?? element.nodeName).toLowerCase();
-
-      if (elementName === normalisedName) {
-        return element;
-      }
-
-      const nestedMatch = this.findElementByNodeName(element, nodeName);
-      if (nestedMatch) {
-        return nestedMatch;
-      }
-    }
-
-    return null;
-  }
-
   private resolveContent(element: Element | null, returnHtml: boolean): string | undefined {
     if (!element) {
       return undefined;
     }
 
     if (returnHtml) {
-      return element.textContent ?? undefined;
+      return element.innerHTML ?? undefined;
     }
 
     return element.textContent ?? undefined;
+  }
+
+  private findElement(node: ParentNode, selector: string): Element | null {
+    const queriedElement = this.querySelectorSafe(node, selector);
+    if (queriedElement) {
+      return queriedElement;
+    }
+
+    const normalisedSelector = selector.replace(/\\:/g, ':');
+    return this.findElementByLocalName(node, normalisedSelector);
+  }
+
+  private querySelectorSafe(node: ParentNode, selector: string): Element | null {
+    if (node instanceof Document || node instanceof Element) {
+      try {
+        return node.querySelector(selector);
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  private findElementByLocalName(node: ParentNode, selector: string): Element | null {
+    if (!selector) {
+      return null;
+    }
+
+    const [namespace, localNameCandidate] = selector.split(':');
+    const expectedLocalName = (localNameCandidate ?? selector).toLowerCase();
+    const expectedWithPrefix = namespace?.length
+      ? `${namespace.toLowerCase()}:${expectedLocalName}`
+      : undefined;
+
+    const queue: Element[] = [];
+
+    if (node instanceof Document) {
+      if (node.documentElement) {
+        queue.push(node.documentElement);
+      }
+    } else if (node instanceof Element) {
+      queue.push(node);
+    }
+
+    while (queue.length > 0) {
+      const element = queue.shift() as Element;
+      const elementTag = (element.tagName ?? element.nodeName).toLowerCase();
+      const elementLocal = (element.localName ?? elementTag).toLowerCase();
+      const elementWithPrefix = element.prefix
+        ? `${element.prefix.toLowerCase()}:${elementLocal}`
+        : undefined;
+
+      if (
+        elementTag === selector.toLowerCase() ||
+        elementLocal === expectedLocalName ||
+        elementWithPrefix === expectedWithPrefix
+      ) {
+        return element;
+      }
+
+      queue.push(...Array.from(element.children));
+    }
+
+    return null;
   }
 }
