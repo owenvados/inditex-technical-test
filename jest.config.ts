@@ -5,14 +5,14 @@ const config: Config = {
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   moduleNameMapper: {
-    '^@app/(.*)$': '<rootDir>/src/app/$1',
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@config/(.*)$': '<rootDir>/src/core/config/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@features/(.*)$': '<rootDir>/src/features/$1',
     '^@podcasts/(.*)$': '<rootDir>/src/features/podcasts/$1',
     '^@styles/(.*)$': '<rootDir>/src/styles/$1',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^@tests/(.*)$': '<rootDir>/src/tests/$1',
+    '\\.css$': 'identity-obj-proxy',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
