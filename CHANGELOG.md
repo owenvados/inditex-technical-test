@@ -14,6 +14,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 - _No entries._
 
+## [v0.7.0-testing] - 2025-11-12
+
+### Added
+
+- Jest-only test suite for components, hooks, and pages focusing on actual logic rather than just exports.
+- Tests for infrastructure utilities: `LocalStorageCache`, `PodcastDescriptionEnricher`, `routes`, and `errorLogger`.
+- Tests for episode list columns creation logic.
+- `__test-utils__` directory for shared test fixtures and mocks with index export.
+
+### Changed
+
+- All tests rewritten to use Jest only, removing React Testing Library dependency.
+- Test mocks moved from `__mocks__` to `__test-utils__` directory for better organization.
+- Existing tests updated to use shared mocks (`MOCK_PODCASTS`) for consistency.
+- `ITunesPodcastRepository` test updated to correctly use `PodcastDescriptionEnricher`.
+- `LocalStorageCache` test now suppresses `console.error` for expected JSON parsing errors.
+
+### Fixed
+
+- TypeScript errors in hooks (`useTopPodcasts`, `usePodcastDetail`) and dependency container.
+- Import paths corrected: `PodcastDescriptionEnricher` (enrichers → services), `useUseCaseQuery` (@core/hooks → @shared/hooks).
+- Replaced `resolveDependency` with specific functions (`getGetTopPodcasts()`, `getGetPodcastDetail()`).
+- Added explicit types to eliminate implicit `any` parameters.
+
+### Removed
+
+- React Testing Library dependencies (`@testing-library/jest-dom`, `@testing-library/react`, `@testing-library/user-event`, and related types).
+- All `.test.tsx` files that used React Testing Library.
+- `@testing-library/jest-dom` import from `jest.setup.ts`.
+
 ## [v0.6.0-e2e] - 2025-11-10
 
 ### Added
