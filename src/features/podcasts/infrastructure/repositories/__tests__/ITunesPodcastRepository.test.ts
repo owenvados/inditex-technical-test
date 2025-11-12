@@ -1,6 +1,7 @@
 import { FeedContentClient } from '@podcasts/infrastructure/api/FeedContentClient';
 import { DEFAULT_PODCAST_SUMMARY } from '@podcasts/infrastructure/mappers/mapperConstants';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
+import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/services/PodcastDescriptionEnricher';
 
 jest.mock('@podcasts/infrastructure/api/ITunesPodcastClient', () => ({
   iTunesPodcastClient: {
@@ -18,6 +19,12 @@ const createFeedClientMock = (): jest.Mocked<FeedContentClient> =>
     fetchChannelSummary: jest.fn(),
     fetchItemDescriptions: jest.fn(),
   }) as unknown as jest.Mocked<FeedContentClient>;
+
+const createEnricherMock = (
+  feedClient: jest.Mocked<FeedContentClient>,
+): PodcastDescriptionEnricher => {
+  return new PodcastDescriptionEnricher(feedClient as unknown as FeedContentClient);
+};
 
 const createLookupResponse = (overrides: Record<string, unknown> = {}) => ({
   resultCount: 2,
@@ -83,7 +90,8 @@ describe('ITunesPodcastRepository', () => {
       createLookupResponse({ description: undefined }),
     );
 
-    const repository = new ITunesPodcastRepository(feedClientMock);
+    const enricher = createEnricherMock(feedClientMock);
+    const repository = new ITunesPodcastRepository(enricher);
     const detail = await repository.getPodcastDetail('123');
 
     expect(feedClientMock.fetchChannelSummary).toHaveBeenCalledWith('https://feed.example.com/rss');
@@ -99,7 +107,8 @@ describe('ITunesPodcastRepository', () => {
 
     (iTunesPodcastClient.getPodcastDetail as jest.Mock).mockResolvedValue(createLookupResponse());
 
-    const repository = new ITunesPodcastRepository(feedClientMock);
+    const enricher = createEnricherMock(feedClientMock);
+    const repository = new ITunesPodcastRepository(enricher);
     const detail = await repository.getPodcastDetail('123');
 
     expect(feedClientMock.fetchChannelSummary).not.toHaveBeenCalled();
@@ -123,7 +132,8 @@ describe('ITunesPodcastRepository', () => {
       createLookupResponse({ description: undefined }),
     );
 
-    const repository = new ITunesPodcastRepository(feedClientMock);
+    const enricher = createEnricherMock(feedClientMock);
+    const repository = new ITunesPodcastRepository(enricher);
     const detail = await repository.getPodcastDetail('123');
 
     expect(feedClientMock.fetchChannelSummary).toHaveBeenCalled();
@@ -142,7 +152,8 @@ describe('ITunesPodcastRepository', () => {
       createLookupResponse({ description: undefined }),
     );
 
-    const repository = new ITunesPodcastRepository(feedClientMock);
+    const enricher = createEnricherMock(feedClientMock);
+    const repository = new ITunesPodcastRepository(enricher);
     const detail = await repository.getPodcastDetail('123');
 
     expect(detail.episodes[0]).toMatchObject({
