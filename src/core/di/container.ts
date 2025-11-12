@@ -1,48 +1,47 @@
 import { GetPodcastDetail } from '@podcasts/application/use-cases/GetPodcastDetail';
 import { GetTopPodcasts } from '@podcasts/application/use-cases/GetTopPodcasts';
-import type { IPodcastRepository } from '@podcasts/domain/repositories/PodcastRepository';
+import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/enrichers/PodcastDescriptionEnricher';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
-import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/services/PodcastDescriptionEnricher';
 
-type Dependencies = {
-  podcastRepository: IPodcastRepository;
-  getTopPodcasts: GetTopPodcasts;
-  getPodcastDetail: GetPodcastDetail;
-};
-
-let dependencyStore: Dependencies | null = null;
-
-const buildDependencies = (): Dependencies => {
-  const podcastRepository = new ITunesPodcastRepository(new PodcastDescriptionEnricher());
-
-  return {
-    podcastRepository,
-    getTopPodcasts: new GetTopPodcasts(podcastRepository),
-    getPodcastDetail: new GetPodcastDetail(podcastRepository),
-  };
-};
-
-const ensureDependencies = (): Dependencies => {
-  if (!dependencyStore) {
-    dependencyStore = buildDependencies();
-  }
-
-  return dependencyStore;
-};
+// Singleton instances
+let getTopPodcastsInstance: GetTopPodcasts | null = null;
+let getPodcastDetailInstance: GetPodcastDetail | null = null;
 
 /**
- * Resolves a dependency managed by the application container.
- *
- * @param token Dependency identifier.
- * @returns Resolved dependency instance.
+ * Creates the repository instance (shared by all use cases).
  */
-export const resolveDependency = <Token extends keyof Dependencies>(
-  token: Token,
-): Dependencies[Token] => ensureDependencies()[token];
+const createRepository = (): ITunesPodcastRepository => {
+  return new ITunesPodcastRepository(new PodcastDescriptionEnricher());
+};
 
 /**
- * Clears the dependency cache. Intended for testing scenarios.
+ * Creates and returns the GetTopPodcasts use case instance.
+ *
+ * @returns GetTopPodcasts use case instance.
+ */
+export const getGetTopPodcasts = (): GetTopPodcasts => {
+  if (!getTopPodcastsInstance) {
+    getTopPodcastsInstance = new GetTopPodcasts(createRepository());
+  }
+  return getTopPodcastsInstance;
+};
+
+/**
+ * Creates and returns the GetPodcastDetail use case instance.
+ *
+ * @returns GetPodcastDetail use case instance.
+ */
+export const getGetPodcastDetail = (): GetPodcastDetail => {
+  if (!getPodcastDetailInstance) {
+    getPodcastDetailInstance = new GetPodcastDetail(createRepository());
+  }
+  return getPodcastDetailInstance;
+};
+
+/**
+ * Clears all dependency instances. Intended for testing scenarios.
  */
 export const resetDependencyContainer = (): void => {
-  dependencyStore = null;
+  getTopPodcastsInstance = null;
+  getPodcastDetailInstance = null;
 };
