@@ -12,6 +12,39 @@ import {
   mapToPodcastList,
 } from '@podcasts/infrastructure/mappers/podcastMapper';
 
+const hasFeedUrl = (item: unknown): item is { feedUrl: string } =>
+  typeof item === 'object' && item !== null && 'feedUrl' in (item as Record<string, unknown>);
+
+const resolveFeedUrl = (lookupResponse: unknown[]): string | undefined =>
+  lookupResponse.find(hasFeedUrl)?.feedUrl;
+
+const enrichPodcastSummary = async (
+  currentSummary: string,
+  feedUrl: string,
+  feedClient: FeedContentClient,
+): Promise<string> => {
+  if (currentSummary !== DEFAULT_PODCAST_SUMMARY) {
+    return currentSummary;
+  }
+
+  const summary = await feedClient.fetchChannelSummary(feedUrl);
+  return summary ?? currentSummary;
+};
+
+const mergeEpisodeDescriptions = (
+  episodes: PodcastDetail['episodes'],
+  descriptions: FeedItemDescriptionMap,
+): PodcastDetail['episodes'] => {
+  if (descriptions.size === 0) {
+    return episodes;
+  }
+
+  return episodes.map((episode) => {
+    const match = episode.guid ? descriptions.get(episode.guid) : descriptions.get(episode.id);
+    return match ? { ...episode, description: match } : episode;
+  });
+};
+
 /**
  * Repository adapter that retrieves podcasts from the iTunes API.
  */
@@ -26,25 +59,16 @@ export class ITunesPodcastRepository implements IPodcastRepository {
   async getPodcastDetail(podcastId: string): Promise<PodcastDetail> {
     const response = await iTunesPodcastClient.getPodcastDetail(podcastId);
     const detail = mapToPodcastDetail(response);
+    const feedUrl = resolveFeedUrl(response.results ?? []);
 
-    const feedRecord = (response.results ?? []).find(
-      (item: unknown) =>
-        typeof item === 'object' && item !== null && 'feedUrl' in (item as Record<string, unknown>),
-    ) as { feedUrl?: string } | undefined;
-
-    if (!feedRecord?.feedUrl) {
+    if (!feedUrl) {
       return detail;
     }
 
-    const [feedSummary, episodeDescriptions] = await Promise.all([
-      detail.podcast.summary === DEFAULT_PODCAST_SUMMARY
-        ? this.feedClient.fetchChannelSummary(feedRecord.feedUrl)
-        : Promise.resolve<string | undefined>(undefined),
-      this.feedClient.fetchItemDescriptions(feedRecord.feedUrl),
+    const [summary, descriptions] = await Promise.all([
+      enrichPodcastSummary(detail.podcast.summary, feedUrl, this.feedClient),
+      this.feedClient.fetchItemDescriptions(feedUrl),
     ]);
-
-    const summary = feedSummary ?? detail.podcast.summary;
-    const episodes = this.mergeEpisodeDescriptions(detail.episodes, episodeDescriptions);
 
     return {
       ...detail,
@@ -52,37 +76,7 @@ export class ITunesPodcastRepository implements IPodcastRepository {
         ...detail.podcast,
         summary,
       },
-      episodes,
+      episodes: mergeEpisodeDescriptions(detail.episodes, descriptions),
     };
-  }
-
-  /**
-   * Merges RSS-provided HTML descriptions into the episode list.
-   *
-   * @param episodes Domain episodes resolved from the lookup API.
-   * @param descriptions HTML snippets keyed by GUID or identifier.
-   * @returns Episodes enriched with RSS descriptions when available.
-   */
-  private mergeEpisodeDescriptions(
-    episodes: PodcastDetail['episodes'],
-    descriptions: FeedItemDescriptionMap,
-  ): PodcastDetail['episodes'] {
-    if (descriptions.size === 0) {
-      return episodes;
-    }
-
-    return episodes.map((episode) => {
-      const match =
-        (episode.guid && descriptions.get(episode.guid)) ?? descriptions.get(episode.id);
-
-      if (!match) {
-        return episode;
-      }
-
-      return {
-        ...episode,
-        description: match,
-      };
-    });
   }
 }
