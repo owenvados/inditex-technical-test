@@ -3,47 +3,34 @@ import type { Cache } from 'swr';
 import { SWRConfig } from 'swr';
 
 const SWR_CACHE_KEY = 'swr-cache';
+const isBrowser = (): boolean => typeof window !== 'undefined';
 
-const isBrowserEnvironment = (): boolean => typeof window !== 'undefined';
-
-const loadCacheFromStorage = (): Cache => {
-  const cacheMap = new Map<string, unknown>() as unknown as Cache;
-
-  if (!isBrowserEnvironment()) {
-    return cacheMap;
+const readCache = (): Map<string, unknown> => {
+  if (!isBrowser()) {
+    return new Map<string, unknown>();
   }
 
   try {
     const rawCache = window.localStorage.getItem(SWR_CACHE_KEY);
-
     if (!rawCache) {
-      return cacheMap;
+      return new Map<string, unknown>();
     }
 
-    const parsedEntries = JSON.parse(rawCache) as [string, unknown][];
-
-    if (!Array.isArray(parsedEntries)) {
-      return cacheMap;
-    }
-
-    for (const [key, value] of parsedEntries) {
-      (cacheMap as Map<string, unknown>).set(key, value);
-    }
+    const entries = JSON.parse(rawCache) as [string, unknown][];
+    return Array.isArray(entries) ? new Map<string, unknown>(entries) : new Map();
   } catch (error) {
     console.error('[SWRProvider] Failed to parse cached data', error);
+    return new Map<string, unknown>();
   }
-
-  return cacheMap;
 };
 
-const persistCacheToStorage = (cache: Cache) => {
-  if (!isBrowserEnvironment()) {
+const writeCache = (cache: Map<string, unknown>) => {
+  if (!isBrowser()) {
     return;
   }
 
   try {
-    const entries = Array.from((cache as Map<string, unknown>).entries());
-    window.localStorage.setItem(SWR_CACHE_KEY, JSON.stringify(entries));
+    window.localStorage.setItem(SWR_CACHE_KEY, JSON.stringify(Array.from(cache.entries())));
   } catch (error) {
     console.error('[SWRProvider] Failed to persist cache data', error);
   }
@@ -56,29 +43,27 @@ const persistCacheToStorage = (cache: Cache) => {
  * @returns SWR configuration provider wiring the persistent cache.
  */
 export const SWRProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const cacheMap = useMemo(() => loadCacheFromStorage(), []);
+  const cache = useMemo(() => readCache(), []);
 
   useEffect(() => {
-    if (!isBrowserEnvironment()) {
+    if (!isBrowser()) {
       return undefined;
     }
 
-    const handleBeforeUnload = () => {
-      persistCacheToStorage(cacheMap);
-    };
+    const handleBeforeUnload = () => writeCache(cache);
 
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      persistCacheToStorage(cacheMap);
+      writeCache(cache);
     };
-  }, [cacheMap]);
+  }, [cache]);
 
   return (
     <SWRConfig
       value={{
-        provider: () => cacheMap,
+        provider: () => cache as unknown as Cache,
         revalidateOnFocus: false,
         revalidateIfStale: false,
         revalidateOnReconnect: false,
