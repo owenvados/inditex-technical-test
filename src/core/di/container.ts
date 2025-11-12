@@ -1,7 +1,7 @@
 import { GetPodcastDetail } from '@podcasts/application/use-cases/GetPodcastDetail';
 import { GetTopPodcasts } from '@podcasts/application/use-cases/GetTopPodcasts';
-import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/enrichers/PodcastDescriptionEnricher';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
+import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/services/PodcastDescriptionEnricher';
 
 // Singleton instances
 let getTopPodcastsInstance: GetTopPodcasts | null = null;

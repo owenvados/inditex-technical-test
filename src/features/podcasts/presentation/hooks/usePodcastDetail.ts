@@ -1,9 +1,9 @@
-import { resolveDependency } from '@core/di/container';
-import { useUseCaseQuery } from '@core/hooks/useUseCaseQuery';
+import { getGetPodcastDetail } from '@core/di/container';
 import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
 import { PODCAST_CACHE_TTL_MS } from '@podcasts/infrastructure/cache/cacheConstants';
 import { podcastCache } from '@podcasts/infrastructure/cache/PodcastCache';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
+import { useUseCaseQuery } from '@shared/hooks/useUseCaseQuery';
 import { useEffect } from 'react';
 
 interface UsePodcastDetailState {
@@ -19,7 +19,7 @@ interface UsePodcastDetailState {
  */
 export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetailState => {
   const { startLoading, stopLoading } = useLoadingState();
-  const getPodcastDetail = resolveDependency('getPodcastDetail');
+  const getPodcastDetail = getGetPodcastDetail();
   const enabled = Boolean(podcastId);
 
   const { data, isLoading, isValidating } = useUseCaseQuery<PodcastDetail | null>({
@@ -33,7 +33,7 @@ export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetai
     cache: enabled
       ? {
           read: () => podcastCache.getPodcastDetail(podcastId!),
-          write: (detail) => {
+          write: (detail: PodcastDetail | null) => {
             if (detail && podcastId) {
               podcastCache.setPodcastDetail(podcastId!, detail);
             }

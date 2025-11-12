@@ -1,9 +1,9 @@
-import { resolveDependency } from '@core/di/container';
-import { useUseCaseQuery } from '@core/hooks/useUseCaseQuery';
+import { getGetTopPodcasts } from '@core/di/container';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import { PODCAST_CACHE_TTL_MS } from '@podcasts/infrastructure/cache/cacheConstants';
 import { podcastCache } from '@podcasts/infrastructure/cache/PodcastCache';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
+import { useUseCaseQuery } from '@shared/hooks/useUseCaseQuery';
 import { useEffect } from 'react';
 
 interface UseTopPodcastsState {
@@ -19,14 +19,14 @@ interface UseTopPodcastsState {
 export const useTopPodcasts = (): UseTopPodcastsState => {
   const { startLoading, stopLoading } = useLoadingState();
 
-  const getTopPodcasts = resolveDependency('getTopPodcasts');
+  const getTopPodcasts = getGetTopPodcasts();
 
   const { data, isLoading, isValidating } = useUseCaseQuery<Podcast[]>({
     key: 'top-podcasts',
     execute: () => getTopPodcasts.execute(),
     cache: {
       read: () => podcastCache.getTopPodcasts(),
-      write: (podcasts) => podcastCache.setTopPodcasts(podcasts),
+      write: (podcasts: Podcast[]) => podcastCache.setTopPodcasts(podcasts),
       ttlMs: PODCAST_CACHE_TTL_MS,
     },
     scope: 'useTopPodcasts',
