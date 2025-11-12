@@ -1,9 +1,9 @@
 import type { Episode } from '@podcasts/domain/entities/Episode';
-import ListTable, { type ListTableColumn } from '@shared/presentation/components/ListTable';
+import ListTable from '@shared/presentation/components/ListTable';
 import StatusMessage from '@shared/presentation/components/StatusMessage';
-import { formatDurationMs, formatShortDate } from '@shared/utils/formatters';
 import React, { memo, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+
+import { createEpisodeListColumns } from './episodeListColumns';
 
 import './EpisodeList.css';
 
@@ -19,30 +19,7 @@ export interface EpisodeListProps {
  * @returns Table element or an empty placeholder when the list is empty.
  */
 const EpisodeListComponent: React.FC<EpisodeListProps> = ({ episodes, podcastId }) => {
-  const columns: Array<ListTableColumn<Episode>> = useMemo(
-    () => [
-      {
-        header: 'Title',
-        cellClassName: 'episode-title-cell',
-        cell: (episode) => (
-          <Link to={`/podcast/${podcastId}/episode/${episode.id}`} className="episode-title-link">
-            {episode.title}
-          </Link>
-        ),
-      },
-      {
-        header: 'Date',
-        cellClassName: 'episode-date',
-        cell: (episode) => formatShortDate(episode.publishedAt),
-      },
-      {
-        header: 'Duration',
-        cellClassName: 'episode-duration',
-        cell: (episode) => formatDurationMs(episode.durationMs),
-      },
-    ],
-    [podcastId],
-  );
+  const columns = useMemo(() => createEpisodeListColumns(podcastId), [podcastId]);
 
   return (
     <ListTable
