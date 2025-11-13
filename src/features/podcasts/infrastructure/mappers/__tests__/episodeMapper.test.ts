@@ -1,3 +1,4 @@
+import { Duration } from '@podcasts/domain/models/episode/Duration';
 import {
   type PodcastEpisodeRecord,
   mapEpisodeFromLookup,
@@ -28,9 +29,10 @@ describe('episodeMapper', () => {
       description: 'Long description',
       guid: 'guid',
       audioUrl: 'https://cdn.example.com/audio.mp3',
-      durationMs: 3600000,
+      duration: expect.any(Duration),
       publishedAt: expect.any(Date),
     });
+    expect(result.duration.milliseconds).toBe(3600000);
   });
 
   it('falls back to episodeGuid when trackId is missing', () => {
@@ -63,7 +65,7 @@ describe('episodeMapper', () => {
     expect(result.guid).toBeUndefined();
     expect(result.audioUrl).toBe('');
     expect(result.publishedAt).toBeInstanceOf(Date);
-    expect(result.durationMs).toBe(0);
+    expect(result.duration.milliseconds).toBe(0);
   });
 
   it('maps collections of lookup records', () => {

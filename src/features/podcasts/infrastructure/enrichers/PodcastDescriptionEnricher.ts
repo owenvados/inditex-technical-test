@@ -1,4 +1,4 @@
-import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import type { PodcastDetail } from '@podcasts/domain/models/aggregate/PodcastDetail';
 import {
   FeedContentClient,
   type FeedItemDescriptionMap,

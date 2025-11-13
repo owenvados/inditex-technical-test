@@ -1,7 +1,7 @@
 import { buildEpisodeDetailRoute } from '@core/router/routes';
-import type { Episode } from '@podcasts/domain/entities/Episode';
+import type { EpisodeListItemDTO } from '@podcasts/application/dtos/episode/EpisodeListItemDTO';
 import type { ListTableColumn } from '@shared/presentation/components/ListTable';
-import { formatDurationMs, formatShortDate } from '@shared/utils/formatters';
+import { formatShortDate } from '@shared/utils/formatters';
 import { Link } from 'react-router-dom';
 
 /**
@@ -10,7 +10,9 @@ import { Link } from 'react-router-dom';
  * @param podcastId Podcast identifier used to compose navigation links.
  * @returns Column definition array consumed by `ListTable`.
  */
-export const createEpisodeListColumns = (podcastId: string): Array<ListTableColumn<Episode>> => [
+export const createEpisodeListColumns = (
+  podcastId: string,
+): Array<ListTableColumn<EpisodeListItemDTO>> => [
   {
     header: 'Title',
     cellClassName: 'episode-title-cell',
@@ -28,6 +30,9 @@ export const createEpisodeListColumns = (podcastId: string): Array<ListTableColu
   {
     header: 'Duration',
     cellClassName: 'episode-duration',
-    cell: (episode) => formatDurationMs(episode.durationMs),
+    cell: (episode) =>
+      episode.duration && typeof episode.duration.format === 'function'
+        ? episode.duration.format()
+        : '--:--',
   },
 ];

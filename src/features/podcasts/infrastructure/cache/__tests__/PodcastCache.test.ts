@@ -1,5 +1,6 @@
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
-import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import type { PodcastDetail } from '@podcasts/domain/models/aggregate/PodcastDetail';
+import { Duration } from '@podcasts/domain/models/episode/Duration';
+import type { Podcast } from '@podcasts/domain/models/podcast/Podcast';
 
 import { PodcastCache } from '../PodcastCache';
 
@@ -95,7 +96,7 @@ describe('PodcastCache', () => {
             description: 'Episode description',
             guid: 'guid-1',
             audioUrl: 'https://example.com/audio.mp3',
-            durationMs: 3600000,
+            duration: 3600000, // Serialized duration (number)
             publishedAt: 1609459200000, // Serialized date
           },
         ],
@@ -109,6 +110,8 @@ describe('PodcastCache', () => {
       expect(result?.podcast.id).toBe('1');
       expect(result?.episodes[0].publishedAt).toBeInstanceOf(Date);
       expect(result?.episodes[0].publishedAt.getTime()).toBe(1609459200000);
+      expect(result?.episodes[0].duration).toBeInstanceOf(Duration);
+      expect(result?.episodes[0].duration.milliseconds).toBe(3600000);
     });
 
     it('returns null when no cached detail exists', () => {
@@ -137,7 +140,7 @@ describe('PodcastCache', () => {
             description: 'Episode description',
             guid: 'guid-1',
             audioUrl: 'https://example.com/audio.mp3',
-            durationMs: 3600000,
+            duration: new Duration(3600000),
             publishedAt: new Date(1609459200000),
           },
         ],
@@ -152,6 +155,7 @@ describe('PodcastCache', () => {
           episodes: expect.arrayContaining([
             expect.objectContaining({
               publishedAt: 1609459200000, // Serialized date
+              duration: 3600000, // Serialized duration (number)
             }),
           ]),
         }),

@@ -1,4 +1,5 @@
-import type { Episode } from '@podcasts/domain/entities/Episode';
+import { Duration } from '@podcasts/domain/models/episode/Duration';
+import type { Episode } from '@podcasts/domain/models/episode/Episode';
 import {
   DEFAULT_EPISODE_DESCRIPTION,
   DEFAULT_EPISODE_ID,
@@ -35,6 +36,29 @@ const resolveEpisodeGuid = (episode: PodcastEpisodeRecord): string | undefined =
   episode.episodeGuid ?? (episode.trackId ? String(episode.trackId) : undefined);
 
 /**
+ * Validates and normalizes a duration value from the API.
+ * Returns 0 if the value is invalid (NaN, Infinity, undefined, null, or negative).
+ *
+ * @param trackTimeMillis Duration in milliseconds from the API.
+ * @returns Valid duration in milliseconds (0 if invalid).
+ */
+const normalizeDuration = (trackTimeMillis: number | undefined): number => {
+  if (trackTimeMillis === undefined || trackTimeMillis === null) {
+    return 0;
+  }
+
+  if (typeof trackTimeMillis !== 'number') {
+    return 0;
+  }
+
+  if (!Number.isFinite(trackTimeMillis) || Number.isNaN(trackTimeMillis) || trackTimeMillis < 0) {
+    return 0;
+  }
+
+  return trackTimeMillis;
+};
+
+/**
  * Converts a lookup API episode record into the domain {@link Episode} entity.
  */
 export const mapEpisodeFromLookup = (episode: PodcastEpisodeRecord): Episode => ({
@@ -44,7 +68,7 @@ export const mapEpisodeFromLookup = (episode: PodcastEpisodeRecord): Episode => 
   guid: resolveEpisodeGuid(episode),
   audioUrl: resolveAudioUrl(episode),
   publishedAt: parseDate(episode.releaseDate),
-  durationMs: episode.trackTimeMillis ?? 0,
+  duration: new Duration(normalizeDuration(episode.trackTimeMillis)),
 });
 
 /**

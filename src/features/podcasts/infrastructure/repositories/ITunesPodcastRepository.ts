@@ -1,12 +1,12 @@
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
-import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import type { PodcastDetail } from '@podcasts/domain/models/aggregate/PodcastDetail';
+import type { Podcast } from '@podcasts/domain/models/podcast/Podcast';
 import type { IPodcastRepository } from '@podcasts/domain/repositories/PodcastRepository';
 import { iTunesPodcastClient } from '@podcasts/infrastructure/api/ITunesPodcastClient';
+import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/enrichers/PodcastDescriptionEnricher';
 import {
   mapToPodcastDetail,
   mapToPodcastList,
 } from '@podcasts/infrastructure/mappers/podcastMapper';
-import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/services/PodcastDescriptionEnricher';
 
 const hasFeedUrl = (item: unknown): item is { feedUrl: string } =>
   typeof item === 'object' && item !== null && 'feedUrl' in (item as Record<string, unknown>);

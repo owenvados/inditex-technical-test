@@ -1,3 +1,4 @@
+import { Duration } from '@podcasts/domain/models/episode/Duration';
 import {
   mapToPodcastDetail,
   mapToPodcastList,
@@ -81,8 +82,9 @@ describe('podcastMapper', () => {
       title: 'Episode title',
       audioUrl: 'https://cdn.example.com/episode.mp3',
       guid: 'guid-200',
-      durationMs: 3600000,
+      duration: expect.any(Duration),
     });
+    expect(detail.episodes[0].duration.milliseconds).toBe(3600000);
   });
 
   it('throws when lookup response has no results', () => {

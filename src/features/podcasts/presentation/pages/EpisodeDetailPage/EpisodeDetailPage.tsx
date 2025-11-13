@@ -13,13 +13,13 @@ import './EpisodeDetailPage.css';
  */
 export const EpisodeDetailPage: React.FC = () => {
   const { podcastId, episodeId } = useParams();
-  const { podcastDetail, isLoading } = usePodcastDetail(podcastId);
+  const { podcastDetail, isLoading, getEpisodeDetail } = usePodcastDetail(podcastId);
 
-  if (isLoading || !podcastDetail) {
+  if (isLoading || !podcastDetail || !episodeId) {
     return null;
   }
 
-  const episode = podcastDetail.episodes.find((item) => item.id === episodeId);
+  const episode = getEpisodeDetail(episodeId);
 
   if (!episode) {
     return null;

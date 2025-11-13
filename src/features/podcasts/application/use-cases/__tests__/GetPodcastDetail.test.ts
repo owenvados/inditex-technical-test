@@ -1,9 +1,10 @@
-import type { Episode } from '@podcasts/domain/entities/Episode';
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
-import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import type { PodcastDetail } from '@podcasts/domain/models/aggregate/PodcastDetail';
+import { Duration } from '@podcasts/domain/models/episode/Duration';
+import type { Episode } from '@podcasts/domain/models/episode/Episode';
+import type { Podcast } from '@podcasts/domain/models/podcast/Podcast';
 import type { IPodcastRepository } from '@podcasts/domain/repositories/PodcastRepository';
 
-import { GetPodcastDetail } from '../GetPodcastDetail';
+import { GetPodcastDetail } from '../podcast/GetPodcastDetail';
 
 describe('GetPodcastDetail use case', () => {
   const podcast: Podcast = {
@@ -21,7 +22,7 @@ describe('GetPodcastDetail use case', () => {
       description: 'Desc 1',
       audioUrl: 'audio-1',
       publishedAt: new Date('2023-01-01'),
-      durationMs: 1_000,
+      duration: new Duration(1_000),
     },
     {
       id: 'ep-2',
@@ -29,7 +30,7 @@ describe('GetPodcastDetail use case', () => {
       description: 'Desc 2',
       audioUrl: 'audio-2',
       publishedAt: new Date('2023-02-01'),
-      durationMs: 2_000,
+      duration: new Duration(2_000),
     },
   ];
 

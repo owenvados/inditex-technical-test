@@ -1,4 +1,4 @@
-import type { Episode } from '@podcasts/domain/entities/Episode';
+import type { EpisodeListItemDTO } from '@podcasts/application/dtos/episode/EpisodeListItemDTO';
 import ListTable from '@shared/presentation/components/ListTable';
 import StatusMessage from '@shared/presentation/components/StatusMessage';
 import React, { memo, useMemo } from 'react';
@@ -8,7 +8,7 @@ import { createEpisodeListColumns } from './episodeListColumns';
 import './EpisodeList.css';
 
 export interface EpisodeListProps {
-  episodes: Episode[];
+  episodes: EpisodeListItemDTO[];
   podcastId: string;
 }
 

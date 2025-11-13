@@ -1,7 +1,7 @@
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import type { Podcast } from '@podcasts/domain/models/podcast/Podcast';
 import type { IPodcastRepository } from '@podcasts/domain/repositories/PodcastRepository';
 
-import { GetTopPodcasts } from '../GetTopPodcasts';
+import { GetTopPodcasts } from '../podcast/GetTopPodcasts';
 
 describe('GetTopPodcasts use case', () => {
   const podcastsMock: Podcast[] = [

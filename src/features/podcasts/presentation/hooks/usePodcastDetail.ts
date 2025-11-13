@@ -1,28 +1,47 @@
-import { getGetPodcastDetail } from '@core/di/container';
-import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import {
+  getGetPodcastDetail,
+  getPodcastDetailService,
+  getEpisodeService,
+} from '@core/di/container';
+import type { EpisodeDetailDTO } from '@podcasts/application/dtos/episode/EpisodeDetailDTO';
+import type { PodcastDetailDTO } from '@podcasts/application/dtos/podcast/PodcastDetailDTO';
+import type { PodcastDetail } from '@podcasts/domain/models/aggregate/PodcastDetail';
 import { PODCAST_CACHE_TTL_MS } from '@podcasts/infrastructure/cache/cacheConstants';
 import { podcastCache } from '@podcasts/infrastructure/cache/PodcastCache';
 import { useLoadingState } from '@shared/hooks/useLoadingState';
 import { useUseCaseQuery } from '@shared/hooks/useUseCaseQuery';
-import { useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 
 interface UsePodcastDetailState {
-  podcastDetail: PodcastDetail | null;
+  podcastDetail: PodcastDetailDTO | null;
   isLoading: boolean;
+  // Helper to get full episode detail by ID (for EpisodeDetailPage)
+  getEpisodeDetail: (episodeId: string) => EpisodeDetailDTO | null;
 }
 
 /**
  * Retrieves podcast detail information and exposes a loading flag.
+ * Returns PodcastDetailDTO with optimized EpisodeListItemDTOs for list display.
+ * Fetches podcast entities using use cases (with caching),
+ * then converts them to DTOs using the service.
+ * This ensures presentation layer doesn't need to know about mappers directly.
  *
  * @param podcastId Identifier of the podcast to fetch.
- * @returns Latest podcast detail along with loading state.
+ * @returns Podcast detail DTO along with loading state and helper functions.
  */
 export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetailState => {
   const { startLoading, stopLoading } = useLoadingState();
   const getPodcastDetail = getGetPodcastDetail();
+  const podcastDetailService = getPodcastDetailService();
+  const episodeService = getEpisodeService();
   const enabled = Boolean(podcastId);
 
-  const { data, isLoading, isValidating } = useUseCaseQuery<PodcastDetail | null>({
+  // Fetch PodcastDetail entity (useUseCaseQuery handles caching)
+  const {
+    data: originalDetail,
+    isLoading,
+    isValidating,
+  } = useUseCaseQuery<PodcastDetail | null>({
     key: enabled ? `podcast-detail:${podcastId}` : null,
     execute: () => {
       if (!podcastId) {
@@ -45,6 +64,24 @@ export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetai
     scope: 'usePodcastDetail',
   });
 
+  // Convert PodcastDetail entity to DTO using the service
+  const podcastDetail = useMemo(() => {
+    return originalDetail ? podcastDetailService.mapToDetailDTO(originalDetail) : null;
+  }, [originalDetail, podcastDetailService]);
+
+  // Helper function to get full episode detail by ID
+  const getEpisodeDetail = useMemo(
+    () =>
+      (episodeId: string): EpisodeDetailDTO | null => {
+        if (!originalDetail) {
+          return null;
+        }
+        const episode = originalDetail.episodes.find((ep) => ep.id === episodeId);
+        return episode ? episodeService.mapToDetailDTO(episode) : null;
+      },
+    [originalDetail, episodeService],
+  );
+
   useEffect(() => {
     if (!podcastId) {
       stopLoading();
@@ -59,7 +96,8 @@ export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetai
   }, [isValidating, podcastId, startLoading, stopLoading]);
 
   return {
-    podcastDetail: data ?? null,
+    podcastDetail,
     isLoading: Boolean(podcastId) && isLoading,
+    getEpisodeDetail,
   };
 };

@@ -1,12 +1,12 @@
 import { buildPodcastDetailRoute } from '@core/router/routes';
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import type { PodcastCardDTO } from '@podcasts/application/dtos/podcast/PodcastCardDTO';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 import './PodcastCard.css';
 
 export interface PodcastCardProps {
-  podcast: Podcast;
+  podcast: PodcastCardDTO;
 }
 
 /**

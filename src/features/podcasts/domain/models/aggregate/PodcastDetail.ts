@@ -1,5 +1,5 @@
-import type { Episode } from './Episode';
-import type { Podcast } from './Podcast';
+import type { Episode } from '../episode/Episode';
+import type { Podcast } from '../podcast/Podcast';
 
 /**
  * Aggregate describing a podcast along with its episodes catalogue.

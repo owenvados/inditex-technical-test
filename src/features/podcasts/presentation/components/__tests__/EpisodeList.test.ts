@@ -1,7 +1,10 @@
 import { MOCK_EPISODES } from '@podcasts/__test-utils__';
+import { mapEpisodesToListItemDTOs } from '@podcasts/infrastructure/mappers/episodeListItemMapper';
 
 import EpisodeList from '../EpisodeList/EpisodeList';
 import { createEpisodeListColumns } from '../EpisodeList/episodeListColumns';
+
+const MOCK_EPISODE_LIST_ITEMS = mapEpisodesToListItemDTOs(MOCK_EPISODES);
 
 describe('EpisodeList', () => {
   it('has displayName set for debugging', () => {
@@ -20,7 +23,7 @@ describe('EpisodeList', () => {
 
     it('renders episode title as link', () => {
       const columns = createEpisodeListColumns('podcast-123');
-      const titleCell = columns[0].cell(MOCK_EPISODES[0]);
+      const titleCell = columns[0].cell(MOCK_EPISODE_LIST_ITEMS[0]);
 
       // The cell should render a Link component (we can't test rendering without RTL)
       // but we verify the function executes without errors
@@ -29,7 +32,7 @@ describe('EpisodeList', () => {
 
     it('formats episode date correctly', () => {
       const columns = createEpisodeListColumns('podcast-123');
-      const dateCell = columns[1].cell(MOCK_EPISODES[0]);
+      const dateCell = columns[1].cell(MOCK_EPISODE_LIST_ITEMS[0]);
 
       // Date should be formatted (tested in dateFormatter.test.ts)
       expect(typeof dateCell).toBe('string');
@@ -37,9 +40,9 @@ describe('EpisodeList', () => {
 
     it('formats episode duration correctly', () => {
       const columns = createEpisodeListColumns('podcast-123');
-      const durationCell = columns[2].cell(MOCK_EPISODES[0]);
+      const durationCell = columns[2].cell(MOCK_EPISODE_LIST_ITEMS[0]);
 
-      // Duration should be formatted (tested in durationFormatter.test.ts)
+      // Duration should be formatted using Duration value object (tested in Duration.test.ts)
       expect(typeof durationCell).toBe('string');
     });
   });

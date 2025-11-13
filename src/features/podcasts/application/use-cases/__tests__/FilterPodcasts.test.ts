@@ -1,9 +1,11 @@
 import { MOCK_PODCASTS } from '@podcasts/__test-utils__';
+import { PodcastFilterService } from '@podcasts/domain/services/PodcastFilterService';
 
-import { FilterPodcasts } from '../FilterPodcasts';
+import { FilterPodcasts } from '../podcast/FilterPodcasts';
 
 describe('FilterPodcasts use case', () => {
-  const useCase = new FilterPodcasts();
+  const filterService = new PodcastFilterService();
+  const useCase = new FilterPodcasts(filterService);
 
   it('returns the original list when the search term is empty', () => {
     const result = useCase.execute(MOCK_PODCASTS, '');

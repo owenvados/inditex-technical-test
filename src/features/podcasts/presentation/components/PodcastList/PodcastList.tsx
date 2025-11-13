@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import type { PodcastCardDTO } from '@podcasts/application/dtos/podcast/PodcastCardDTO';
 import StatusMessage from '@shared/presentation/components/StatusMessage';
 
 import PodcastCard from '../PodcastCard';
 import './PodcastList.css';
 
 export interface PodcastListProps {
-  podcasts: Podcast[];
+  podcasts: PodcastCardDTO[];
 }
 
 /**

@@ -1,5 +1,5 @@
 import { buildPodcastDetailRoute } from '@core/router/routes';
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
+import type { Podcast } from '@podcasts/domain/models/podcast/Podcast';
 import { Sidebar } from '@shared/presentation/components/Sidebar';
 import React from 'react';
 import { Link } from 'react-router-dom';

@@ -1,5 +1,5 @@
-import type { Podcast } from '@podcasts/domain/entities/Podcast';
-import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import type { PodcastDetail } from '@podcasts/domain/models/aggregate/PodcastDetail';
+import type { Podcast } from '@podcasts/domain/models/podcast/Podcast';
 import type {
   PodcastLookupResponse,
   TopPodcastsResponse,

@@ -1,7 +1,7 @@
 import { FeedContentClient } from '@podcasts/infrastructure/api/FeedContentClient';
+import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/enrichers/PodcastDescriptionEnricher';
 import { DEFAULT_PODCAST_SUMMARY } from '@podcasts/infrastructure/mappers/mapperConstants';
 import { ITunesPodcastRepository } from '@podcasts/infrastructure/repositories/ITunesPodcastRepository';
-import { PodcastDescriptionEnricher } from '@podcasts/infrastructure/services/PodcastDescriptionEnricher';
 
 jest.mock('@podcasts/infrastructure/api/ITunesPodcastClient', () => ({
   iTunesPodcastClient: {

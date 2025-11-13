@@ -1,5 +1,5 @@
-import type { Podcast } from '../entities/Podcast';
-import type { PodcastDetail } from '../entities/PodcastDetail';
+import type { PodcastDetail } from '../models/aggregate/PodcastDetail';
+import type { Podcast } from '../models/podcast/Podcast';
 
 /**
  * Port (interface) that defines the contract for retrieving podcasts.

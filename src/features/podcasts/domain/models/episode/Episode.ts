@@ -1,3 +1,5 @@
+import { Duration } from './Duration';
+
 /**
  * Entity representing an individual podcast episode.
  */
@@ -8,5 +10,5 @@ export interface Episode {
   guid?: string;
   audioUrl: string;
   publishedAt: Date;
-  durationMs: number;
+  duration: Duration;
 }
