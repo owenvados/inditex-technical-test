@@ -54,12 +54,18 @@ graph TD
 | ----------------- | ------- |
 | `src/app`         | App shell, router mount, global providers. |
 | `src/core`        | SWR provider, router, config wiring. |
-| `src/features/podcasts/domain` | Entities, value objects, repository contracts. |
-| `src/features/podcasts/application` | Use cases coordinating domain + infrastructure. |
-| `src/features/podcasts/infrastructure` | HTTP clients, RSS feed parser, cache adapters, mappers. |
-| `src/features/podcasts/presentation` | React components, pages, custom hooks, ViewModels. |
+| `src/features/podcasts/domain` | Entities, value objects, repository contracts, domain services. |
+| `src/features/podcasts/application` | Use cases, DTOs, application services, mappers (Domain→DTO). |
+| `src/features/podcasts/infrastructure` | HTTP clients, RSS feed parser, cache adapters, mappers (API→Domain). |
+| `src/features/podcasts/presentation` | React components, pages, custom hooks. |
 | `src/shared`      | Reusable infrastructure adapters, shared UI, utilities. |
 | `src/tests/__e2e__` | Cypress specs (excluded from app TypeScript build). |
+
+### Architecture Documentation
+
+For a detailed explanation of the hexagonal architecture components, see:
+- **[Componentes de Arquitectura](./docs/componentes-arquitectura.md)** - Detailed explanation of DTOs, mappers, services, and how they form part of the hexagonal architecture.
+- **[Arquitectura del Proyecto](./docs/arquitectura.md)** - Complete architecture documentation with implementation guidelines.
 
 ## Key Decisions & Trade-offs
 - **SWR for data orchestration:** Keeps hooks declarative while respecting domain boundaries; paired with 24h TTL localStorage cache.
