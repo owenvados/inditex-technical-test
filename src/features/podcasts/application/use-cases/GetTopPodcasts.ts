@@ -2,16 +2,22 @@ import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import type { IPodcastRepository } from '@podcasts/domain/repositories/PodcastRepository';
 
 /**
- * Use case responsible for orchestrating the retrieval of the top podcasts catalogue.
+ * Use case that orchestrates the retrieval of the top podcasts catalogue.
+ * Coordinates the data fetching process through the repository interface.
  */
 export class GetTopPodcasts {
   /**
-   * @param repository Podcast repository implementation used to fetch data.
+   * Creates an instance of the GetTopPodcasts use case.
+   *
+   * @param repository Repository implementation that provides access to podcast data.
    */
   constructor(private readonly repository: IPodcastRepository) {}
 
   /**
-   * Executes the use case and returns the list of podcasts provided by the repository.
+   * Fetches the top podcasts from the repository.
+   * Returns the list of podcasts in the order provided by the data source.
+   *
+   * @returns Promise that resolves to an array of podcast entities.
    */
   async execute(): Promise<Podcast[]> {
     return this.repository.getTopPodcasts();

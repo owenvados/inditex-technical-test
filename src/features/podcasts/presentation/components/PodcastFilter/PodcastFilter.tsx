@@ -9,10 +9,12 @@ export interface PodcastFilterProps {
 }
 
 /**
- * Renders the podcasts filter section with a badge and search input.
+ * Component that renders a filter section for searching podcasts.
+ * Displays a badge with the filtered count and a search input field.
+ * Updates the search term in real-time as the user types.
  *
- * @param props Component properties containing search state and callbacks.
- * @returns A filter section ready to be reused across pages.
+ * @param props Component props containing search term, change handler, and filtered count.
+ * @returns Filter section component with search input and count badge.
  */
 export const PodcastFilter: React.FC<PodcastFilterProps> = ({
   searchTerm,

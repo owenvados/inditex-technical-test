@@ -10,10 +10,11 @@ export interface PodcastListProps {
 }
 
 /**
- * Grid that displays a collection of podcasts.
+ * Component that displays a collection of podcasts in a grid layout.
+ * Shows an empty state message when no podcasts are available.
  *
- * @param props - List of podcasts to render.
- * @returns A responsive grid of podcast cards or an empty placeholder.
+ * @param props Component props containing the list of podcasts to display.
+ * @returns Grid layout with podcast cards or an empty state message.
  */
 export const PodcastList: React.FC<PodcastListProps> = ({ podcasts }) => {
   if (podcasts.length === 0) {

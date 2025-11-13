@@ -2,19 +2,25 @@ import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
 import type { IPodcastRepository } from '@podcasts/domain/repositories/PodcastRepository';
 
 /**
- * Use case responsible for retrieving a podcast detail including its episodes.
+ * Use case that orchestrates the retrieval of a podcast detail with its episodes.
+ * Ensures that episodes are sorted by publication date in descending order.
  */
 export class GetPodcastDetail {
   /**
-   * @param repository Podcast repository used to fetch the detail.
+   * Creates an instance of the GetPodcastDetail use case.
+   *
+   * @param repository Repository implementation that provides access to podcast data.
    */
   constructor(private readonly repository: IPodcastRepository) {}
 
   /**
-   * Executes the lookup ensuring episodes are sorted by published date (DESC).
+   * Fetches detailed information about a podcast including all its episodes.
+   * Episodes are sorted by publication date with the most recent first.
+   * Throws an error if the podcast ID is empty or invalid.
    *
-   * @param podcastId Identifier of the podcast to fetch.
-   * @returns Podcast detail aggregate.
+   * @param podcastId Unique identifier of the podcast to retrieve.
+   * @returns Promise that resolves to a podcast detail aggregate with sorted episodes.
+   * @throws Error if the podcast ID is empty or invalid.
    */
   async execute(podcastId: string): Promise<PodcastDetail> {
     if (!podcastId || podcastId.trim() === '') {

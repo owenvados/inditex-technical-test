@@ -12,10 +12,12 @@ export interface PodcastSidebarProps {
 }
 
 /**
- * Static sidebar showcasing the podcast artwork and metadata.
+ * Component that displays podcast information in a sidebar layout.
+ * Shows podcast artwork, title, author, and description.
+ * Optionally links to a specific route when clicked.
  *
- * @param props Podcast information to display.
- * @returns Sidebar element containing image, title, author and description.
+ * @param props Component props containing podcast data and optional link destination.
+ * @returns Sidebar component with podcast information and optional navigation.
  */
 export const PodcastSidebar: React.FC<PodcastSidebarProps> = ({ podcast, linkTo }) => {
   const target = linkTo ?? buildPodcastDetailRoute(podcast.id);

@@ -104,7 +104,11 @@ const resolveDetailSummary = (record: PodcastLookupRecord): string =>
   record.description ?? DEFAULT_PODCAST_SUMMARY;
 
 /**
- * Maps a feed entry into the domain {@link Podcast} entity.
+ * Maps an RSS feed entry to a podcast domain entity.
+ * Extracts and normalizes podcast data from the iTunes RSS feed format.
+ *
+ * @param entry RSS feed entry containing podcast information.
+ * @returns Podcast domain entity with normalized data.
  */
 const mapFeedEntryToPodcast = (entry: FeedEntry): Podcast => ({
   id: resolveFeedId(entry),
@@ -115,7 +119,11 @@ const mapFeedEntryToPodcast = (entry: FeedEntry): Podcast => ({
 });
 
 /**
- * Converts RSS feed data to domain podcasts.
+ * Maps the iTunes top podcasts API response to domain podcast entities.
+ * Converts the RSS feed format to domain entities.
+ *
+ * @param response iTunes API response containing the top podcasts feed.
+ * @returns Array of podcast domain entities.
  */
 export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
   const entries = response.feed?.entry ?? [];
@@ -123,7 +131,13 @@ export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
 };
 
 /**
- * Combines podcast lookup metadata and episodes into the {@link PodcastDetail} aggregate.
+ * Maps the iTunes podcast lookup API response to a podcast detail aggregate.
+ * Combines podcast metadata with episode information into a single aggregate.
+ * Throws an error if the podcast is not found in the response.
+ *
+ * @param apiResponse iTunes API lookup response containing podcast and episode data.
+ * @returns Podcast detail aggregate with podcast and episodes.
+ * @throws Error if the podcast is not found in the API response.
  */
 export const mapToPodcastDetail = (apiResponse: PodcastLookupResponse): PodcastDetail => {
   const results = (apiResponse.results ?? []) as PodcastLookupRecord[];

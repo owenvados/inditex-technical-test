@@ -12,9 +12,11 @@ interface UseTopPodcastsState {
 }
 
 /**
- * Provides the top podcasts catalogue along with a loading indicator.
+ * Custom hook that provides access to the top podcasts catalogue.
+ * Fetches podcasts from the repository and manages loading state.
+ * Uses caching to reduce unnecessary API calls.
  *
- * @returns Current list of podcasts and loading flag.
+ * @returns Object containing the list of podcasts and loading state.
  */
 export const useTopPodcasts = (): UseTopPodcastsState => {
   const { startLoading, stopLoading } = useLoadingState();

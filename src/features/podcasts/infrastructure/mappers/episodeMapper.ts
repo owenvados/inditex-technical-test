@@ -35,7 +35,12 @@ const resolveEpisodeGuid = (episode: PodcastEpisodeRecord): string | undefined =
   episode.episodeGuid ?? (episode.trackId ? String(episode.trackId) : undefined);
 
 /**
- * Converts a lookup API episode record into the domain {@link Episode} entity.
+ * Maps an iTunes API episode record to an episode domain entity.
+ * Converts API response format to domain entity with normalized data.
+ * Uses default values when API data is missing or invalid.
+ *
+ * @param episode iTunes API episode record to map.
+ * @returns Episode domain entity with normalized data.
  */
 export const mapEpisodeFromLookup = (episode: PodcastEpisodeRecord): Episode => ({
   id: resolveEpisodeId(episode),
@@ -48,7 +53,11 @@ export const mapEpisodeFromLookup = (episode: PodcastEpisodeRecord): Episode => 
 });
 
 /**
- * Transforms an array of lookup records into domain {@link Episode} entities.
+ * Maps an array of iTunes API episode records to episode domain entities.
+ * Processes each record through the single episode mapper.
+ *
+ * @param records Array of iTunes API episode records to map.
+ * @returns Array of episode domain entities.
  */
 export const mapEpisodesFromLookupRecords = (records: PodcastEpisodeRecord[]): Episode[] =>
   records.map((record) => mapEpisodeFromLookup(record));

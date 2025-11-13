@@ -6,17 +6,27 @@ import {
 import { DEFAULT_PODCAST_SUMMARY } from '@podcasts/infrastructure/mappers/mapperConstants';
 
 /**
- * Enriches podcast details with additional information resolved from RSS feeds.
+ * Service that enriches podcast details with additional information from RSS feeds.
+ * Fetches and merges podcast summaries and episode descriptions from RSS feeds
+ * to provide more complete information than what is available in the API.
  */
 export class PodcastDescriptionEnricher {
+  /**
+   * Creates an instance of the podcast description enricher.
+   *
+   * @param feedClient Client that fetches content from RSS feeds.
+   */
   constructor(private readonly feedClient: FeedContentClient = new FeedContentClient()) {}
 
   /**
-   * Enhances the provided podcast detail with feed metadata when a feed URL is available.
+   * Enriches the provided podcast detail with information from RSS feeds.
+   * Only fetches feed data if a feed URL is provided.
+   * Replaces default summaries with feed summaries when available.
+   * Merges episode descriptions from the feed with existing episode data.
    *
-   * @param detail Podcast detail obtained from the lookup API.
+   * @param detail Podcast detail obtained from the API lookup.
    * @param feedUrl Optional RSS feed URL associated with the podcast.
-   * @returns Podcast detail including feed-based summary and episode descriptions.
+   * @returns Promise that resolves to an enriched podcast detail with feed-based information.
    */
   async enrich(detail: PodcastDetail, feedUrl?: string): Promise<PodcastDetail> {
     if (!feedUrl) {

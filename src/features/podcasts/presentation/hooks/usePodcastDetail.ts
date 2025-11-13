@@ -12,10 +12,13 @@ interface UsePodcastDetailState {
 }
 
 /**
- * Retrieves podcast detail information and exposes a loading flag.
+ * Custom hook that provides access to detailed information about a specific podcast.
+ * Fetches podcast detail including episodes from the repository and manages loading state.
+ * Uses caching to reduce unnecessary API calls.
+ * Returns null if no podcast ID is provided.
  *
- * @param podcastId Identifier of the podcast to fetch.
- * @returns Latest podcast detail along with loading state.
+ * @param podcastId Unique identifier of the podcast to fetch. Can be undefined to disable fetching.
+ * @returns Object containing the podcast detail and loading state.
  */
 export const usePodcastDetail = (podcastId: string | undefined): UsePodcastDetailState => {
   const { startLoading, stopLoading } = useLoadingState();

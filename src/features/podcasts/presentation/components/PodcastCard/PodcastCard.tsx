@@ -10,10 +10,11 @@ export interface PodcastCardProps {
 }
 
 /**
- * Memoized summary card linking to the podcast detail view.
+ * Memoized component that displays a podcast card with navigation to the detail page.
+ * Shows podcast artwork, title, and author information in a clickable card format.
  *
- * @param props Attributes describing the podcast to render.
- * @returns Interactive card with artwork, title and author information.
+ * @param props Component props containing the podcast data to display.
+ * @returns Clickable card component that navigates to the podcast detail page.
  */
 export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
   return (

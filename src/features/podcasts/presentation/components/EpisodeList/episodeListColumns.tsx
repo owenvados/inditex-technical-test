@@ -5,10 +5,12 @@ import { formatDurationMs, formatShortDate } from '@shared/utils/formatters';
 import { Link } from 'react-router-dom';
 
 /**
- * Builds the columns configuration for the episode list table.
+ * Creates the column configuration for the episode list table.
+ * Defines columns for title, publication date, and duration.
+ * Title column includes navigation links to episode detail pages.
  *
- * @param podcastId Podcast identifier used to compose navigation links.
- * @returns Column definition array consumed by `ListTable`.
+ * @param podcastId Unique identifier of the podcast used to build episode navigation links.
+ * @returns Array of column definitions for the episode list table.
  */
 export const createEpisodeListColumns = (podcastId: string): Array<ListTableColumn<Episode>> => [
   {

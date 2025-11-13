@@ -27,18 +27,27 @@ const ensureNamespaceDeclarations = (xml: string): string => {
 export type FeedItemDescriptionMap = Map<string, string>;
 
 /**
- * Downloads RSS feeds and extracts sanitized channel/episode descriptions.
+ * Client that fetches and parses RSS feeds to extract podcast descriptions.
+ * Downloads RSS feeds, parses XML content, and extracts sanitized HTML descriptions
+ * for channels and episodes. Uses caching to avoid redundant downloads.
  */
 export class FeedContentClient {
   private readonly documentCache = new Map<string, Document>();
 
+  /**
+   * Creates an instance of the feed content client.
+   *
+   * @param client HTTP client used to fetch RSS feeds.
+   */
   constructor(private readonly client: HttpClient = httpClient) {}
 
   /**
-   * Retrieves the textual summary of an RSS channel.
+   * Fetches and extracts the channel summary from an RSS feed.
+   * Returns the text content of the channel description or summary.
+   * Returns undefined if the feed cannot be fetched or parsed.
    *
-   * @param feedUrl Absolute RSS feed URL.
-   * @returns Plain text description if available.
+   * @param feedUrl Absolute URL of the RSS feed to fetch.
+   * @returns Promise that resolves to the channel summary text, or undefined if unavailable.
    */
   async fetchChannelSummary(feedUrl?: string): Promise<string | undefined> {
     if (!feedUrl) {
@@ -56,10 +65,13 @@ export class FeedContentClient {
   }
 
   /**
-   * Retrieves sanitized HTML descriptions for each RSS item keyed by its GUID.
+   * Fetches and extracts sanitized HTML descriptions for each episode in an RSS feed.
+   * Returns a map of episode GUIDs to their sanitized HTML descriptions.
+   * Only includes episodes that have a valid GUID.
+   * Returns an empty map if the feed cannot be fetched or parsed.
    *
-   * @param feedUrl Absolute RSS feed URL.
-   * @returns Map containing sanitized HTML snippets per episode GUID.
+   * @param feedUrl Absolute URL of the RSS feed to fetch.
+   * @returns Promise that resolves to a map of episode GUIDs to sanitized HTML descriptions.
    */
   async fetchItemDescriptions(feedUrl?: string): Promise<FeedItemDescriptionMap> {
     const descriptions: FeedItemDescriptionMap = new Map();

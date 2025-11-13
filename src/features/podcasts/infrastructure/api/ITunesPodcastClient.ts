@@ -16,15 +16,22 @@ export type PodcastLookupResponse = {
 };
 
 /**
- * Client responsible for fetching data from the iTunes public API.
+ * Client that fetches podcast data from the iTunes Podcast API.
+ * Provides methods to retrieve top podcasts and detailed podcast information.
  */
 export class ITunesPodcastClient {
+  /**
+   * Creates an instance of the iTunes podcast client.
+   *
+   * @param client HTTP client used to make API requests.
+   */
   constructor(private readonly client: HttpClient = httpClient) {}
 
   /**
-   * Retrieves the top podcasts feed as provided by iTunes.
+   * Fetches the top podcasts feed from the iTunes API.
+   * Returns the RSS feed response containing the top podcasts.
    *
-   * @returns Promise resolving with the feed payload.
+   * @returns Promise that resolves to the top podcasts feed response.
    */
   async getTopPodcasts(): Promise<TopPodcastsResponse> {
     const url = buildTopPodcastsFeedUrl();
@@ -32,10 +39,13 @@ export class ITunesPodcastClient {
   }
 
   /**
-   * Retrieves the detailed podcast information including episodes.
+   * Fetches detailed information about a specific podcast from the iTunes API.
+   * Returns podcast metadata and episode information.
+   * Throws an error if the podcast ID is empty or invalid.
    *
-   * @param podcastId Identifier of the podcast to lookup.
-   * @returns Promise resolving with the lookup payload.
+   * @param podcastId Unique identifier of the podcast to lookup.
+   * @returns Promise that resolves to the podcast lookup response with episodes.
+   * @throws Error if the podcast ID is empty or invalid.
    */
   async getPodcastDetail(podcastId: string): Promise<PodcastLookupResponse> {
     if (!podcastId || podcastId.trim() === '') {

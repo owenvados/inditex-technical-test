@@ -7,9 +7,11 @@ import React, { useState } from 'react';
 import './PodcastsPage.css';
 
 /**
- * Page that lists the top podcasts using the catalogue hook.
+ * Page component that displays the top podcasts catalogue.
+ * Provides a search filter to filter podcasts by title and author.
+ * Shows a loading state while fetching podcasts and displays the filtered results.
  *
- * @returns Section showing a loading placeholder or the podcast grid.
+ * @returns Page component with search filter and podcast grid, or loading state.
  */
 export const PodcastsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');

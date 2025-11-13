@@ -15,10 +15,12 @@ interface UseFilteredPodcastsState {
 }
 
 /**
- * Provides a debounced, filtered list of podcasts derived from the cached catalogue.
+ * Custom hook that provides a filtered list of podcasts with debounced search.
+ * Filters podcasts by matching the search term against title and author fields.
+ * Uses debouncing to reduce filtering operations while the user is typing.
  *
- * @param searchTerm Raw text that should be applied to the podcast list.
- * @returns Filtered podcasts alongside loading indicators and counts.
+ * @param searchTerm Search keyword to filter podcasts by title and author.
+ * @returns Object containing filtered podcasts, total count, filtered count, and loading state.
  */
 export const useFilteredPodcasts = (searchTerm: string): UseFilteredPodcastsState => {
   const { podcasts, isLoading } = useTopPodcasts();

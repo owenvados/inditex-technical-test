@@ -13,10 +13,12 @@ export interface EpisodeListProps {
 }
 
 /**
- * Renders the episodes catalogue for a podcast including navigation to each episode detail.
+ * Component that displays a list of podcast episodes in a table format.
+ * Shows episode title, publication date, and duration with navigation to episode details.
+ * Displays an empty state message when no episodes are available.
  *
- * @param props Component configuration combining the dataset and podcast identifier.
- * @returns Table element or an empty placeholder when the list is empty.
+ * @param props Component props containing episodes data and podcast identifier.
+ * @returns Table component with episode list or empty state message.
  */
 const EpisodeListComponent: React.FC<EpisodeListProps> = ({ episodes, podcastId }) => {
   const columns = useMemo(() => createEpisodeListColumns(podcastId), [podcastId]);

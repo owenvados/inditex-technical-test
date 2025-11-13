@@ -8,9 +8,11 @@ import { useParams } from 'react-router-dom';
 import './PodcastDetailPage.css';
 
 /**
- * Page that displays the selected podcast metadata and its episodes list.
+ * Page component that displays detailed information about a specific podcast.
+ * Shows podcast metadata in a sidebar and a list of episodes in the main content area.
+ * Returns null while loading or if the podcast is not found.
  *
- * @returns Section rendering loading, empty or detail states.
+ * @returns Page component with podcast details and episode list, or null if not found.
  */
 export const PodcastDetailPage: React.FC = () => {
   const { podcastId } = useParams();
