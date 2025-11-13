@@ -83,10 +83,34 @@ describe('Application Flow', () => {
     }).as('getPodcastFeed');
   });
 
+  // Helper to hide webpack-dev-server overlay
+  const hideOverlay = () => {
+    // Wait a bit for overlay to appear if it's going to
+    cy.wait(100);
+    cy.window().then((win) => {
+      // Remove overlay element
+      const overlay = win.document.getElementById('webpack-dev-server-client-overlay');
+      if (overlay) {
+        overlay.remove();
+      }
+      // Remove iframe overlays
+      const iframes = win.document.querySelectorAll('iframe[id*="webpack"]');
+      iframes.forEach((iframe) => {
+        if (iframe.id.includes('overlay')) {
+          iframe.remove();
+        }
+      });
+      // Remove any elements with webpack overlay styles
+      const overlayElements = win.document.querySelectorAll('[id*="webpack"][id*="overlay"]');
+      overlayElements.forEach((el) => el.remove());
+    });
+  };
+
   it('allows a user to browse podcasts and play an episode', () => {
     // Opens the catalogue and waits for the top podcasts list.
     cy.visit('/');
     cy.wait('@getTopPodcasts');
+    hideOverlay();
 
     // Shows the badge and the only podcast entry.
     cy.get('[data-testid="podcast-count"]').should('have.text', '1');
@@ -140,6 +164,7 @@ describe('Application Flow', () => {
   it('returns to the home catalogue when clicking the header title', () => {
     cy.visit('/');
     cy.wait('@getTopPodcasts');
+    hideOverlay();
     cy.get('[data-testid="podcast-card-link"]').click();
     cy.wait('@getPodcastDetail');
     cy.wait('@getPodcastFeed');
@@ -188,6 +213,7 @@ describe('Application Flow', () => {
   it('shows an empty state when the filter has no matches', () => {
     cy.visit('/');
     cy.wait('@getTopPodcasts');
+    hideOverlay();
 
     cy.get('input[placeholder="Filter podcasts..."]').type('no-match-term');
     cy.get('[data-testid="podcast-count"]').should('have.text', '0');
@@ -218,6 +244,7 @@ describe('Application Flow', () => {
         );
       },
     });
+    hideOverlay();
 
     cy.get('[data-testid="podcast-card"]').should('contain.text', 'Cached Daily');
     cy.get('[data-testid="podcast-count"]').should('have.text', '1');

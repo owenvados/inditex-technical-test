@@ -10,5 +10,11 @@ module.exports = merge(common, {
     hot: true,
     open: true,
     historyApiFallback: true,
+    client: {
+      overlay: {
+        errors: false,
+        warnings: false,
+      },
+    },
   },
 });
