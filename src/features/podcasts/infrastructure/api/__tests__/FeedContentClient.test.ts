@@ -23,14 +23,14 @@ describe('FeedContentClient', () => {
 
     const client = new FeedContentClient(httpClientMock);
     await expect(client.fetchChannelSummary(FEED_URL)).resolves.toBe('Sample description');
-    expect(httpClientMock.getText).toHaveBeenCalledWith(FEED_URL, true, { timeoutMs: 20000 });
+    expect(httpClientMock.getText).toHaveBeenCalledWith(FEED_URL, true);
   });
 
   // Collects cleaned HTML per guid when items contain rich descriptions.
   it('extracts sanitized HTML descriptions keyed by guid', async () => {
     const httpClientMock = createHttpClientMock();
     httpClientMock.getText.mockResolvedValue(`
-      <rss>
+      <rss xmlns:content="http://purl.org/rss/1.0/modules/content/">
         <channel>
           <item>
             <guid>episode-1</guid>
@@ -49,7 +49,7 @@ describe('FeedContentClient', () => {
 
     expect(descriptions.get('episode-1')).toBe('<p>Episode <strong>HTML</strong></p>');
     expect(descriptions.get('episode-2')).toBe('<p>Description <em>fallback</em></p>');
-    expect(httpClientMock.getText).toHaveBeenCalledWith(FEED_URL, true, { timeoutMs: 20000 });
+    expect(httpClientMock.getText).toHaveBeenCalledWith(FEED_URL, true);
   });
 
   // Uses the internal cache so the feed is only fetched once.

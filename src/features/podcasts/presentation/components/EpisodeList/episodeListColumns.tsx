@@ -30,6 +30,6 @@ export const createEpisodeListColumns = (podcastId: string): Array<ListTableColu
   {
     header: 'Duration',
     cellClassName: 'episode-duration',
-    cell: (episode) => episode.duration.format(),
+    cell: (episode) => episode.duration?.format() ?? '--:--',
   },
 ];

@@ -35,7 +35,7 @@ const deserialisePodcastDetail = (cached: CachedPodcastDetail): PodcastDetail =>
     return {
       ...rest,
       publishedAt: new Date(episode.publishedAt),
-      duration: new Duration(durationMs),
+      duration: new Duration(durationMs ?? 0),
     };
   }),
 });

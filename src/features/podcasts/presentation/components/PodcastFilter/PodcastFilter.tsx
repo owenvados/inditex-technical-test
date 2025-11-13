@@ -1,3 +1,4 @@
+import Badge from '@shared/presentation/components/Badge';
 import React from 'react';
 
 import './PodcastFilter.css';
@@ -38,9 +39,7 @@ export const PodcastFilter: React.FC<PodcastFilterProps> = ({
 
   return (
     <div className="podcast-filter">
-      <span className="podcast-filter__badge" data-testid="podcast-count">
-        {filteredCount}
-      </span>
+      <Badge count={filteredCount} dataTestId="podcast-count" />
       <input
         type="text"
         className="podcast-filter__input"
