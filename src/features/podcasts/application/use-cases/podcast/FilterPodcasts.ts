@@ -1,32 +1,31 @@
-import { PodcastFilterService } from '@podcasts/domain/services/PodcastFilterService';
-
-import type { PodcastCardDTO } from '../../dtos/podcast/PodcastCardDTO';
+import type { Podcast } from '@podcasts/domain/entities/Podcast';
 
 /**
- * Use case that orchestrates the filtering of podcasts by search term.
- * Delegates the filtering logic to the domain service.
+ * Use case that filters podcasts by search term.
+ * Implements case-insensitive matching against title and author fields.
  */
 export class FilterPodcasts {
-  private readonly filterService: PodcastFilterService;
-
   /**
-   * Creates an instance of the FilterPodcasts use case.
+   * Filters the provided podcasts based on the search term.
+   * The search is case-insensitive and matches against both title and author.
+   * Returns all podcasts if the search term is empty or whitespace.
    *
-   * @param filterService Domain service that performs the actual filtering logic.
+   * @param podcasts Array of podcast entities to filter.
+   * @param searchTerm Search keyword to match against podcast title and author.
+   * @returns Filtered array of podcast entities that match the search term.
    */
-  constructor(filterService: PodcastFilterService = new PodcastFilterService()) {
-    this.filterService = filterService;
-  }
+  execute(podcasts: Podcast[], searchTerm: string): Podcast[] {
+    const normalizedTerm = searchTerm.trim().toLowerCase();
 
-  /**
-   * Filters the provided podcast cards based on the search term.
-   * Uses the domain service to perform case-insensitive matching against title and author.
-   *
-   * @param podcastCards Array of podcast cards to filter.
-   * @param searchTerm Search keyword to match against podcast data.
-   * @returns Filtered array of podcast cards that match the search term.
-   */
-  execute(podcastCards: PodcastCardDTO[], searchTerm: string): PodcastCardDTO[] {
-    return this.filterService.filter(podcastCards, searchTerm);
+    if (!normalizedTerm) {
+      return podcasts;
+    }
+
+    return podcasts.filter((podcast) => {
+      const podcastTitle = podcast.title.toLowerCase();
+      const podcastAuthor = podcast.author.toLowerCase();
+
+      return podcastTitle.includes(normalizedTerm) || podcastAuthor.includes(normalizedTerm);
+    });
   }
 }

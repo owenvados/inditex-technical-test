@@ -36,23 +36,26 @@ El núcleo de la aplicación. Contiene la lógica de negocio pura, sin dependenc
 **¿Qué son?** Representan conceptos del negocio con identidad única.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/domain/entities/Podcast.ts
 export interface Podcast {
-  id: string;        // Identificador único
-  title: string;     // Título del podcast
-  author: string;    // Autor del podcast
-  imageUrl: string;  // URL de la imagen
-  summary: string;   // Descripción del podcast
+  id: string; // Identificador único
+  title: string; // Título del podcast
+  author: string; // Autor del podcast
+  imageUrl: string; // URL de la imagen
+  summary: string; // Descripción del podcast
 }
 ```
 
 **¿Qué hacen?**
+
 - Definen la estructura de datos del negocio
 - Son independientes de APIs o frameworks
 - Pueden contener lógica de negocio simple
 
 **En la arquitectura:**
+
 - Son el "modelo puro" del dominio
 - No conocen React, APIs, ni localStorage
 - Pueden reutilizarse en cualquier plataforma
@@ -62,6 +65,7 @@ export interface Podcast {
 **¿Qué son?** Contratos que definen QUÉ operaciones se pueden hacer, no CÓMO.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/domain/repositories/PodcastRepository.ts
 export interface IPodcastRepository {
@@ -71,39 +75,34 @@ export interface IPodcastRepository {
 ```
 
 **¿Qué hacen?**
+
 - Definen las operaciones disponibles
 - No tienen implementación (solo interfaz)
 - Son "puertos" que esperan un "adaptador"
 
 **En la arquitectura:**
+
 - Son la "puerta" del dominio hacia el exterior
 - La infraestructura los implementa (adaptadores)
 - El dominio depende de abstracciones, no de implementaciones
 
 #### Domain Services (Servicios de Dominio)
 
-**¿Qué son?** Lógica de negocio que no pertenece a una entidad específica.
+**¿Qué son?** Lógica de negocio compleja que no pertenece a una entidad específica.
 
-**Ejemplo:**
-```typescript
-// src/features/podcasts/domain/services/PodcastFilterService.ts
-export class PodcastFilterService {
-  filter(podcastCards: PodcastCardDTO[], searchTerm: string): PodcastCardDTO[] {
-    // Lógica de filtrado case-insensitive
-    // Busca en título y autor
-  }
-}
-```
+**Características:**
 
-**¿Qué hacen?**
 - Implementan reglas de negocio complejas
 - Operan sobre múltiples entidades
 - Contienen lógica que no es responsabilidad de una entidad
+- **Importante:** Solo trabajan con entidades del dominio, nunca con DTOs de otras capas
 
 **En la arquitectura:**
-- Pertenecen al dominio (lógica de negocio)
+
+- Pertenecen al dominio (lógica de negocio pura)
 - Pueden ser usados por casos de uso
-- Son independientes de infraestructura
+- Son independientes de infraestructura y aplicación
+- **No pueden depender de capas externas (Application, Infrastructure, Presentation)**
 
 ---
 
@@ -113,36 +112,61 @@ Orquesta la lógica de negocio, conectando el dominio con la infraestructura y l
 
 #### Use Cases (Casos de Uso)
 
-**¿Qué son?** Orquestadores que coordinan el flujo de datos entre capas.
+**¿Qué son?** Orquestadores que coordinan el flujo de datos entre capas y pueden contener lógica simple de aplicación.
 
-**Ejemplo:**
+**Ejemplo 1: Orquestación simple**
+
 ```typescript
 // src/features/podcasts/application/use-cases/GetTopPodcasts.ts
 export class GetTopPodcasts {
   constructor(private readonly repository: IPodcastRepository) {}
-  
+
   async execute(): Promise<Podcast[]> {
     return this.repository.getTopPodcasts();
   }
 }
 ```
 
+**Ejemplo 2: Lógica de aplicación (filtrado, transformación)**
+
+```typescript
+// src/features/podcasts/application/use-cases/FilterPodcasts.ts
+export class FilterPodcasts {
+  execute(podcasts: Podcast[], searchTerm: string): Podcast[] {
+    // Lógica simple de filtrado para la UI
+    // No es lógica de negocio compleja, solo transformación/presentación
+    const normalizedTerm = searchTerm.trim().toLowerCase();
+    return podcasts.filter((podcast) => {
+      return (
+        podcast.title.toLowerCase().includes(normalizedTerm) ||
+        podcast.author.toLowerCase().includes(normalizedTerm)
+      );
+    });
+  }
+}
+```
+
 **¿Qué hacen?**
+
 - Coordinan operaciones del negocio
 - Usan repositorios para obtener datos
+- Pueden contener lógica simple de aplicación (filtrado, transformación)
 - Pueden combinar múltiples operaciones
-- No contienen lógica de negocio (solo orquestación)
+- No contienen lógica de negocio compleja (esa va en Domain Services)
 
 **En la arquitectura:**
+
 - Son el "controlador" de la lógica de aplicación
 - Conectan dominio con infraestructura
 - Son usados por hooks de React
+- Pueden trabajar con entidades del dominio o DTOs
 
 #### DTOs (Data Transfer Objects)
 
 **¿Qué son?** Objetos optimizados para transferir datos entre capas.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/application/dtos/podcast/PodcastCardDTO.ts
 export interface PodcastCardDTO {
@@ -155,12 +179,14 @@ export interface PodcastCardDTO {
 ```
 
 **¿Qué hacen?**
+
 - Transportan datos optimizados para la UI
 - Excluyen campos pesados cuando no son necesarios
 - Reducen el uso de memoria
 - Facilitan la transferencia entre capas
 
 **En la arquitectura:**
+
 - Son el "idioma común" entre application y presentation
 - Optimizados para mostrar datos en la UI
 - Evitan pasar entidades completas cuando solo se necesitan algunos campos
@@ -170,6 +196,7 @@ export interface PodcastCardDTO {
 **¿Qué son?** Servicios que convierten entidades del dominio a DTOs.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/application/services/podcast/PodcastCardService.ts
 export class PodcastCardService {
@@ -180,12 +207,14 @@ export class PodcastCardService {
 ```
 
 **¿Qué hacen?**
+
 - Convierten entidades de dominio a DTOs
 - Optimizan datos para la presentación
 - Actúan como adaptadores entre dominio y presentación
 - No manejan datos ni caché (solo transformación)
 
 **En la arquitectura:**
+
 - Son el "traductor" entre dominio y presentación
 - Transforman datos del dominio a formato UI
 - Mantienen el dominio independiente de la presentación
@@ -195,6 +224,7 @@ export class PodcastCardService {
 **¿Qué son?** Funciones que transforman entidades del dominio a DTOs.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/application/mappers/podcastCardMapper.ts
 export const mapPodcastToCardDTO = (podcast: Podcast): PodcastCardDTO => ({
@@ -207,12 +237,14 @@ export const mapPodcastToCardDTO = (podcast: Podcast): PodcastCardDTO => ({
 ```
 
 **¿Qué hacen?**
+
 - Convierten una entidad a un DTO
 - Seleccionan solo los campos necesarios
 - Reducen el tamaño de los datos
 - Optimizan para la presentación
 
 **En la arquitectura:**
+
 - Pertenecen a la capa de aplicación (Domain → DTO)
 - Solo transforman datos, no los obtienen
 - Son usados por servicios de aplicación
@@ -228,6 +260,7 @@ Implementa las conexiones con el mundo exterior (APIs, caché, almacenamiento).
 **¿Qué son?** Implementaciones concretas de los repositorios del dominio.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/infrastructure/repositories/ITunesPodcastRepository.ts
 export class ITunesPodcastRepository implements IPodcastRepository {
@@ -239,12 +272,14 @@ export class ITunesPodcastRepository implements IPodcastRepository {
 ```
 
 **¿Qué hacen?**
+
 - Implementan las interfaces del dominio
 - Conectan con APIs externas
 - Convierten datos de API a entidades del dominio
 - Manejan detalles técnicos (HTTP, errores, etc.)
 
 **En la arquitectura:**
+
 - Son "adaptadores" que conectan el dominio con APIs
 - Implementan los "puertos" definidos en el dominio
 - Transforman datos externos (API) a formato interno (Domain)
@@ -254,6 +289,7 @@ export class ITunesPodcastRepository implements IPodcastRepository {
 **¿Qué son?** Clientes que hacen peticiones HTTP a APIs externas.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/infrastructure/api/ITunesPodcastClient.ts
 export class ITunesPodcastClient {
@@ -265,12 +301,14 @@ export class ITunesPodcastClient {
 ```
 
 **¿Qué hacen?**
+
 - Hacen peticiones HTTP a APIs externas
 - Manejan detalles de comunicación (URLs, headers, etc.)
 - Retornan respuestas en formato de API
 - No conocen el dominio (solo APIs)
 
 **En la arquitectura:**
+
 - Son el "puente" con APIs externas
 - Trabajan con formatos de API (no dominio)
 - Son usados por repositorios de infraestructura
@@ -280,6 +318,7 @@ export class ITunesPodcastClient {
 **¿Qué son?** Funciones que transforman datos de API a entidades del dominio.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/infrastructure/mappers/podcastMapper.ts
 export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
@@ -289,12 +328,14 @@ export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
 ```
 
 **¿Qué hacen?**
+
 - Convierten respuestas de API a entidades del dominio
 - Normalizan datos de diferentes fuentes
 - Manejan valores por defecto y validaciones
 - Transforman formatos externos a formatos internos
 
 **En la arquitectura:**
+
 - Pertenecen a la capa de infraestructura (API → Domain)
 - Convierten datos externos a formato del dominio
 - Son usados por repositorios de infraestructura
@@ -304,13 +345,14 @@ export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
 **¿Qué son?** Servicios que almacenan datos temporalmente para mejorar el rendimiento.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/infrastructure/cache/PodcastCache.ts
 export class PodcastCache {
   getTopPodcasts(): Podcast[] | null {
     return this.cache.get<Podcast[]>(TOP_PODCASTS_KEY);
   }
-  
+
   setTopPodcasts(podcasts: Podcast[]): void {
     this.cache.set(TOP_PODCASTS_KEY, podcasts, PODCAST_CACHE_TTL_MS);
   }
@@ -318,12 +360,14 @@ export class PodcastCache {
 ```
 
 **¿Qué hacen?**
+
 - Almacenan datos en localStorage (o otro almacenamiento)
 - Reducen peticiones a APIs
 - Mejoran el rendimiento de la aplicación
 - Manejan serialización/deserialización
 
 **En la arquitectura:**
+
 - Son "adaptadores" de almacenamiento
 - Implementan estrategias de caché
 - Son usados por hooks y casos de uso
@@ -339,11 +383,12 @@ Muestra datos al usuario y maneja la interacción.
 **¿Qué son?** Hooks de React que conectan la UI con los casos de uso.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/presentation/hooks/useTopPodcasts.ts
 export const useTopPodcasts = (): UseTopPodcastsState => {
   const getTopPodcasts = getGetTopPodcasts();
-  
+
   const { data, isLoading } = useUseCaseQuery<Podcast[]>({
     key: 'top-podcasts',
     execute: () => getTopPodcasts.execute(),
@@ -352,18 +397,20 @@ export const useTopPodcasts = (): UseTopPodcastsState => {
       write: (podcasts: Podcast[]) => podcastCache.setTopPodcasts(podcasts),
     },
   });
-  
+
   return { podcasts: data ?? [], isLoading };
 };
 ```
 
 **¿Qué hacen?**
+
 - Conectan React con casos de uso
 - Gestionan el estado de carga
 - Manejan caché y actualizaciones
 - Proporcionan datos a componentes
 
 **En la arquitectura:**
+
 - Son el "puente" entre React y la lógica de aplicación
 - Usan casos de uso para obtener datos
 - Gestionan estado de UI (loading, error, etc.)
@@ -373,6 +420,7 @@ export const useTopPodcasts = (): UseTopPodcastsState => {
 **¿Qué son?** Componentes que muestran datos en la UI.
 
 **Ejemplo:**
+
 ```typescript
 // src/features/podcasts/presentation/components/PodcastCard/PodcastCard.tsx
 export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
@@ -389,12 +437,14 @@ export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
 ```
 
 **¿Qué hacen?**
+
 - Muestran datos en la UI
 - Manejan la interacción del usuario
 - Son componentes "puros" (solo presentación)
 - No contienen lógica de negocio
 
 **En la arquitectura:**
+
 - Son la "cara" de la aplicación
 - Reciben datos de hooks
 - Muestran información al usuario
@@ -430,7 +480,7 @@ export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
 │  ┌────────────────────────────────────────────────────┐    │
 │  │  Use Cases:                                        │    │
 │  │  - GetTopPodcasts                                  │    │
-│  │  - FilterPodcasts                                  │    │
+│  │  - FilterPodcasts (filtrado para UI)              │    │
 │  │  - GetPodcastDetail                                │    │
 │  │                                                     │    │
 │  │  Services:                                         │    │
@@ -464,7 +514,7 @@ export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
 │  │  - IPodcastRepository                              │    │
 │  │                                                     │    │
 │  │  Domain Services:                                  │    │
-│  │  - PodcastFilterService                            │    │
+│  │  - (Lógica de negocio compleja)                    │    │
 │  └────────────────────────────────────────────────────┘    │
 └────────────────────┬────────────────────────────────────────┘
                      │ implemented by
@@ -548,17 +598,13 @@ export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
    ↓
 5. Hook usa caso de uso FilterPodcasts
    ↓
-6. Caso de uso usa PodcastFilterService (domain)
+6. Caso de uso filtra podcasts por título y autor (lógica simple)
    ↓
-7. Service filtra podcasts por título y autor
+7. Caso de uso retorna podcasts filtrados al hook
    ↓
-8. Service retorna podcasts filtrados
+8. Hook retorna { podcasts, filteredCount } al componente
    ↓
-9. Caso de uso retorna podcasts filtrados al hook
-   ↓
-10. Hook retorna { podcasts, filteredCount } al componente
-   ↓
-11. Componente muestra podcasts filtrados
+9. Componente muestra podcasts filtrados
 ```
 
 ### Ejemplo: Convertir Podcasts a DTOs
@@ -594,18 +640,18 @@ export const PodcastCard = memo(({ podcast }: PodcastCardProps) => {
 // 1. Presentation Layer - Hook
 export const useTopPodcasts = () => {
   const getTopPodcasts = getGetTopPodcasts(); // Obtiene caso de uso
-  
+
   const { data } = useUseCaseQuery({
     execute: () => getTopPodcasts.execute(), // Usa caso de uso
   });
-  
+
   return { podcasts: data ?? [] };
 };
 
 // 2. Application Layer - Use Case
 export class GetTopPodcasts {
   constructor(private repository: IPodcastRepository) {}
-  
+
   async execute(): Promise<Podcast[]> {
     return this.repository.getTopPodcasts(); // Usa repositorio
   }
@@ -633,7 +679,7 @@ export class ITunesPodcastClient {
 
 // 6. Infrastructure Layer - Mapper
 export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
-  return response.feed.entry.map(entry => ({
+  return response.feed.entry.map((entry) => ({
     id: entry.id.attributes['im:id'],
     title: entry['im:name'].label,
     // ... más campos
@@ -648,36 +694,36 @@ export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
 ```typescript
 // 1. Presentation Layer - Hook
 export const useFilteredPodcasts = (searchTerm: string) => {
-  const { podcasts } = useTopPodcasts(); // Obtiene podcasts
+  const { podcasts } = useTopPodcasts(); // Obtiene podcasts (entidades del dominio)
   const filterPodcasts = new FilterPodcasts(); // Caso de uso
-  
+
   const filtered = useMemo(() => {
-    return filterPodcasts.execute(podcasts, searchTerm); // Filtra
+    return filterPodcasts.execute(podcasts, searchTerm); // Filtra directamente
   }, [podcasts, searchTerm]);
-  
+
   return { podcasts: filtered };
 };
 
 // 2. Application Layer - Use Case
 export class FilterPodcasts {
-  private filterService = new PodcastFilterService(); // Domain service
-  
-  execute(podcasts: PodcastCardDTO[], searchTerm: string): PodcastCardDTO[] {
-    return this.filterService.filter(podcasts, searchTerm); // Delega a domain
-  }
-}
+  execute(podcasts: Podcast[], searchTerm: string): Podcast[] {
+    // Lógica simple de filtrado para la UI
+    // Trabaja con entidades del dominio
+    const normalizedTerm = searchTerm.trim().toLowerCase();
+    if (!normalizedTerm) {
+      return podcasts;
+    }
 
-// 3. Domain Layer - Domain Service
-export class PodcastFilterService {
-  filter(podcasts: PodcastCardDTO[], searchTerm: string): PodcastCardDTO[] {
-    const normalized = searchTerm.trim().toLowerCase();
-    return podcasts.filter(podcast => {
-      return podcast.title.toLowerCase().includes(normalized) ||
-             podcast.author.toLowerCase().includes(normalized);
+    return podcasts.filter((podcast) => {
+      const podcastTitle = podcast.title.toLowerCase();
+      const podcastAuthor = podcast.author.toLowerCase();
+      return podcastTitle.includes(normalizedTerm) || podcastAuthor.includes(normalizedTerm);
     });
   }
 }
 ```
+
+**Nota:** Este filtrado es lógica simple de aplicación (presentación), no lógica de negocio compleja. Por eso está en el use case, no en un Domain Service.
 
 ### Caso 3: Convertir a DTOs
 
@@ -727,11 +773,12 @@ export const PodcastCard = ({ podcast }: { podcast: PodcastCardDTO }) => {
 **Propósito:** Convertir datos de APIs externas a entidades del dominio.
 
 **Ejemplo:**
+
 ```typescript
 // podcastMapper.ts (Infrastructure)
 export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
   // Convierte formato de iTunes API a Podcast entity
-  return response.feed.entry.map(entry => ({
+  return response.feed.entry.map((entry) => ({
     id: entry.id.attributes['im:id'],
     title: entry['im:name'].label,
     author: entry['im:artist'].label,
@@ -741,12 +788,14 @@ export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
 ```
 
 **Características:**
+
 - ✅ Dependen de infraestructura (conocen formatos de API)
 - ✅ Convierten datos externos a formato interno
 - ✅ Manejan normalización de datos de diferentes fuentes
 - ✅ Usan valores por defecto cuando faltan datos
 
 **En la arquitectura:**
+
 - Pertenecen a la capa de infraestructura
 - Son "adaptadores" que traducen formato externo a interno
 - Solo se usan dentro de la infraestructura
@@ -758,6 +807,7 @@ export const mapToPodcastList = (response: TopPodcastsResponse): Podcast[] => {
 **Propósito:** Convertir entidades del dominio a DTOs optimizados para la UI.
 
 **Ejemplo:**
+
 ```typescript
 // podcastCardMapper.ts (Application)
 export const mapPodcastToCardDTO = (podcast: Podcast): PodcastCardDTO => ({
@@ -770,12 +820,14 @@ export const mapPodcastToCardDTO = (podcast: Podcast): PodcastCardDTO => ({
 ```
 
 **Características:**
+
 - ✅ No dependen de infraestructura (solo conocen dominio y DTOs)
 - ✅ Optimizan datos para la presentación
 - ✅ Excluyen campos pesados cuando no son necesarios
 - ✅ Reducen el uso de memoria
 
 **En la arquitectura:**
+
 - Pertenecen a la capa de aplicación
 - Son "traductores" que adaptan dominio a presentación
 - Se usan por servicios de aplicación
@@ -806,11 +858,13 @@ API Response (iTunes)          Podcast Entity (Domain)        PodcastCardDTO (Ap
 ### ¿Por qué hay mappers en application y en infrastructure?
 
 **Mappers de Infrastructure (API → Domain):**
+
 - Convierten datos de APIs externas a entidades del dominio
 - Normalizan formatos externos
 - Ejemplo: `mapToPodcastList()` convierte respuesta de iTunes API a `Podcast[]`
 
 **Mappers de Application (Domain → DTO):**
+
 - Convierten entidades del dominio a DTOs optimizados para la UI
 - Seleccionan solo campos necesarios
 - Ejemplo: `mapPodcastToCardDTO()` convierte `Podcast` a `PodcastCardDTO`
@@ -818,11 +872,13 @@ API Response (iTunes)          Podcast Entity (Domain)        PodcastCardDTO (Ap
 ### ¿Por qué necesitamos DTOs si ya tenemos Entities?
 
 **DTOs optimizan para la UI:**
+
 - Excluyen campos pesados (como `summary`) cuando no son necesarios
 - Reducen el uso de memoria
 - Facilitan la transferencia entre capas
 
 **Entities son el modelo del dominio:**
+
 - Contienen todos los campos del negocio
 - Son independientes de la UI
 - Pueden ser reutilizados en diferentes contextos
@@ -830,18 +886,27 @@ API Response (iTunes)          Podcast Entity (Domain)        PodcastCardDTO (Ap
 ### ¿Dónde va la lógica de negocio?
 
 **Domain Layer:**
+
 - Reglas de negocio complejas → Domain Services
 - Lógica simple → Entities
-- Ejemplo: `PodcastFilterService` filtra podcasts
+- **Importante:** Domain Services solo trabajan con entidades del dominio, nunca con DTOs
 
 **Application Layer:**
-- Solo orquestación, no lógica de negocio
+
+- Orquestación y lógica simple de aplicación (filtrado, transformación para UI)
 - Coordina entre dominio e infraestructura
-- Ejemplo: `FilterPodcasts` delega a `PodcastFilterService`
+- Ejemplo: `FilterPodcasts` implementa filtrado simple para la UI trabajando con entidades del dominio
+
+**Regla de oro:**
+
+- **Lógica de negocio compleja** → Domain Services
+- **Lógica simple de aplicación/presentación** → Use Cases
+- **Domain Services NO pueden depender de capas externas (DTOs, APIs, etc.)**
 
 ### ¿Cómo se comunican las capas?
 
 **Regla de dependencia:**
+
 ```
 Presentation → Application → Domain ← Infrastructure
 ```
@@ -855,12 +920,14 @@ Presentation → Application → Domain ← Infrastructure
 ### ¿Qué pasa si cambio de API?
 
 **Solo necesitas cambiar Infrastructure:**
+
 1. Crear nuevo API Client
 2. Crear nuevos mappers (API → Domain)
 3. Implementar nuevo Repository
 4. **No necesitas cambiar Domain ni Application**
 
 **Ejemplo:**
+
 ```typescript
 // Antes: ITunesPodcastRepository
 // Después: SpotifyPodcastRepository
@@ -875,12 +942,12 @@ Presentation → Application → Domain ← Infrastructure
 
 ### Componentes por Capa
 
-| Capa | Componentes | Responsabilidad |
-|------|-------------|-----------------|
-| **Domain** | Entities, Repository Interfaces, Domain Services | Lógica de negocio pura |
-| **Application** | Use Cases, DTOs, Application Services, Mappers (Domain→DTO) | Orquestación y transformación |
+| Capa               | Componentes                                                          | Responsabilidad                |
+| ------------------ | -------------------------------------------------------------------- | ------------------------------ |
+| **Domain**         | Entities, Repository Interfaces, Domain Services                     | Lógica de negocio pura         |
+| **Application**    | Use Cases, DTOs, Application Services, Mappers (Domain→DTO)          | Orquestación y transformación  |
 | **Infrastructure** | Repository Implementations, API Clients, Mappers (API→Domain), Cache | Conexión con el mundo exterior |
-| **Presentation** | Hooks, Components | Mostrar datos al usuario |
+| **Presentation**   | Hooks, Components                                                    | Mostrar datos al usuario       |
 
 ### Flujo Típico
 
@@ -918,4 +985,3 @@ Esta arquitectura hexagonal separa claramente las responsabilidades:
 - **Presentation:** "¿Cómo muestro podcasts?" (UI)
 
 Cada componente tiene un propósito claro y trabaja junto con los demás para crear una aplicación robusta, mantenible y escalable.
-
