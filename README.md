@@ -65,6 +65,9 @@ graph TD
 
 For a detailed explanation of the hexagonal architecture components, see:
 - **[Componentes de Arquitectura](./docs/componentes-arquitectura.md)** - Detailed explanation of DTOs, mappers, services, and how they form part of the hexagonal architecture.
+- **[Ports y Adapters](./docs/ports-adapters.md)** - Simple explanation of ports and adapters pattern with real examples from the project.
+- **[Inyección de Dependencias](./docs/inyeccion-dependencias.md)** - Simple explanation of dependency injection with practical examples from the project.
+- **[Patrones de Diseño y Arquitecturas](./docs/patrones-diseño-arquitecturas.md)** - Complete list of design patterns and architectures applied in the project.
 - **[Arquitectura del Proyecto](./docs/arquitectura.md)** - Complete architecture documentation with implementation guidelines.
 
 ## Key Decisions & Trade-offs
