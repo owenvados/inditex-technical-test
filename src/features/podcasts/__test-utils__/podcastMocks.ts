@@ -1,6 +1,7 @@
 import type { Episode } from '@podcasts/domain/entities/Episode';
 import type { Podcast } from '@podcasts/domain/entities/Podcast';
 import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import { Duration } from '@podcasts/domain/value-objects/Duration';
 
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/300';
 
@@ -37,7 +38,7 @@ export const MOCK_EPISODES: Episode[] = [
     description: 'First episode description.',
     audioUrl: 'https://example.com/audio/episode-1.mp3',
     publishedAt: new Date('2025-01-10T00:00:00Z'),
-    durationMs: 1_800_000,
+    duration: new Duration(1_800_000),
   },
   {
     id: 'episode-2',
@@ -45,7 +46,7 @@ export const MOCK_EPISODES: Episode[] = [
     description: 'Second episode description.',
     audioUrl: 'https://example.com/audio/episode-2.mp3',
     publishedAt: new Date('2025-01-05T00:00:00Z'),
-    durationMs: 2_400_000,
+    duration: new Duration(2_400_000),
   },
 ];
 

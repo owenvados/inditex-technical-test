@@ -1,4 +1,5 @@
 import type { PodcastDetail } from '@podcasts/domain/entities/PodcastDetail';
+import { Duration } from '@podcasts/domain/value-objects/Duration';
 import { FeedContentClient } from '@podcasts/infrastructure/api/FeedContentClient';
 import { DEFAULT_PODCAST_SUMMARY } from '@podcasts/infrastructure/mappers/mapperConstants';
 
@@ -38,7 +39,7 @@ describe('PodcastDescriptionEnricher', () => {
           guid: 'guid-1',
           audioUrl: 'https://example.com/audio.mp3',
           publishedAt: new Date('2025-01-01'),
-          durationMs: 3600000,
+          duration: new Duration(3600000),
         },
       ],
     };

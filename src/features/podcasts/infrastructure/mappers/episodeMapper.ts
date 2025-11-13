@@ -1,4 +1,5 @@
 import type { Episode } from '@podcasts/domain/entities/Episode';
+import { Duration } from '@podcasts/domain/value-objects/Duration';
 import {
   DEFAULT_EPISODE_DESCRIPTION,
   DEFAULT_EPISODE_ID,
@@ -49,7 +50,7 @@ export const mapEpisodeFromLookup = (episode: PodcastEpisodeRecord): Episode => 
   guid: resolveEpisodeGuid(episode),
   audioUrl: resolveAudioUrl(episode),
   publishedAt: parseDate(episode.releaseDate),
-  durationMs: episode.trackTimeMillis ?? 0,
+  duration: new Duration(episode.trackTimeMillis ?? 0),
 });
 
 /**

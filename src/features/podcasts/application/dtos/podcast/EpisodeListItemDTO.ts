@@ -5,6 +5,12 @@ import type { Episode } from '@podcasts/domain/entities/Episode';
  * Contains only the fields required for displaying an episode in a list,
  * excluding heavy fields like description and audio URL to reduce memory usage.
  *
- * Derived from Episode entity using Pick to select only necessary fields.
+ * Note: duration is converted to milliseconds for the DTO to maintain compatibility
+ * with presentation layer that may need the raw number value.
  */
-export type EpisodeListItemDTO = Pick<Episode, 'id' | 'title' | 'publishedAt' | 'durationMs'>;
+export interface EpisodeListItemDTO {
+  id: Episode['id'];
+  title: Episode['title'];
+  publishedAt: Episode['publishedAt'];
+  durationMs: number;
+}

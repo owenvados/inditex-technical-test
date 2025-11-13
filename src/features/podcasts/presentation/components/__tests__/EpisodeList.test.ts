@@ -39,7 +39,7 @@ describe('EpisodeList', () => {
       const columns = createEpisodeListColumns('podcast-123');
       const durationCell = columns[2].cell(MOCK_EPISODES[0]);
 
-      // Duration should be formatted (tested in durationFormatter.test.ts)
+      // Duration should be formatted using Duration value object
       expect(typeof durationCell).toBe('string');
     });
   });

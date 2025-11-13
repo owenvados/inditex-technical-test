@@ -1,3 +1,5 @@
+import type { Duration } from '../value-objects/Duration';
+
 /**
  * Domain entity representing a single podcast episode.
  * Contains all the information needed to display and play an episode.
@@ -9,5 +11,5 @@ export interface Episode {
   guid?: string;
   audioUrl: string;
   publishedAt: Date;
-  durationMs: number;
+  duration: Duration;
 }

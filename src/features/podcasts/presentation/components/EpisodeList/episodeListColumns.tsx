@@ -1,7 +1,7 @@
 import { buildEpisodeDetailRoute } from '@core/router/routes';
 import type { Episode } from '@podcasts/domain/entities/Episode';
 import type { ListTableColumn } from '@shared/presentation/components/ListTable';
-import { formatDurationMs, formatShortDate } from '@shared/utils/formatters';
+import { formatShortDate } from '@shared/utils/formatters';
 import { Link } from 'react-router-dom';
 
 /**
@@ -30,6 +30,6 @@ export const createEpisodeListColumns = (podcastId: string): Array<ListTableColu
   {
     header: 'Duration',
     cellClassName: 'episode-duration',
-    cell: (episode) => formatDurationMs(episode.durationMs),
+    cell: (episode) => episode.duration.format(),
   },
 ];

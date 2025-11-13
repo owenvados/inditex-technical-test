@@ -81,8 +81,9 @@ describe('podcastMapper', () => {
       title: 'Episode title',
       audioUrl: 'https://cdn.example.com/episode.mp3',
       guid: 'guid-200',
-      durationMs: 3600000,
+      duration: expect.any(Object),
     });
+    expect(detail.episodes[0].duration.toMilliseconds()).toBe(3600000);
   });
 
   it('throws when lookup response has no results', () => {

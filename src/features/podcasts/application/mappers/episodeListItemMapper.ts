@@ -13,7 +13,7 @@ export const mapEpisodeToListItemDTO = (episode: Episode): EpisodeListItemDTO =>
   id: episode.id,
   title: episode.title,
   publishedAt: episode.publishedAt,
-  durationMs: episode.durationMs,
+  durationMs: episode.duration.toMilliseconds(),
 });
 
 /**
