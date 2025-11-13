@@ -114,6 +114,7 @@ For a detailed explanation of the hexagonal architecture components, see:
 
 | Tag                      | Summary                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `v0.8.0-refactor`        | Refactor HttpClient with timeout restoration and DRY principle. Add Badge component. Fix duration and XML parsing issues. |
 | `v0.7.0-testing`         | Refactor testing strategy: remove React Testing Library and use Jest-only tests.                      |
 | `v0.6.0-e2e`             | Cypress e2e suite, resilient RSS parsing, and expanded unit coverage for podcast filtering/use cases. |
 | `v0.5.0-cache`           | SWR data layer with persistent localStorage cache and 24h expiration.                                  |
